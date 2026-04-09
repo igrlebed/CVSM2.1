@@ -20,6 +20,7 @@ import { ScenarioCompare } from '@/components/constructor/scenario-compare';
 import { ImportDataModal } from '@/components/constructor/import-data-modal';
 import { NewRouteEditor, RouteUploadedState } from '@/components/constructor/new-route-editor';
 import { PublishScenarioModal } from '@/components/constructor/publish-scenario-modal';
+import { RejectScenarioModal } from '@/components/constructor/reject-scenario-modal';
 import { VersionHistory } from '@/components/constructor/version-history';
 import { CompareSelectionBar } from '@/components/constructor/compare-selection-bar';
 import { AccessDeniedState } from '@/components/ui/access-denied-state';
@@ -41,6 +42,7 @@ export default function ConstructorPage() {
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [importModalOpen, setImportModalOpen] = useState(false);
   const [publishModalOpen, setPublishModalOpen] = useState(false);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
 
   const handleSelectScenario = (scenario: Scenario) => {
     setSelectedScenario(scenario);
@@ -78,6 +80,91 @@ export default function ConstructorPage() {
       }
     }
   };
+
+  // Approval workflow handlers
+  const handleSendForReview = useCallback(() => {
+    if (!selectedScenario) return;
+    
+    // Update scenario status to ready-for-review
+    const now = new Date().toISOString();
+    const updatedScenario: Scenario = {
+      ...selectedScenario,
+      status: 'ready-for-review',
+      submittedAt: now,
+      submittedBy: 'current-user', // In real app, get from auth
+      lastModified: now,
+    };
+    
+    // Update in scenarios array (in real app, would be API call)
+    const idx = scenarios.findIndex(s => s.id === selectedScenario.id);
+    if (idx >= 0) {
+      scenarios[idx] = updatedScenario;
+      setSelectedScenario(updatedScenario);
+    }
+  }, [selectedScenario]);
+
+  const handleApprove = useCallback(() => {
+    if (!selectedScenario) return;
+    
+    const now = new Date().toISOString();
+    const updatedScenario: Scenario = {
+      ...selectedScenario,
+      status: 'approved',
+      reviewedAt: now,
+      reviewedBy: 'current-approver', // In real app, get from auth
+      lastModified: now,
+    };
+    
+    const idx = scenarios.findIndex(s => s.id === selectedScenario.id);
+    if (idx >= 0) {
+      scenarios[idx] = updatedScenario;
+      setSelectedScenario(updatedScenario);
+    }
+  }, [selectedScenario]);
+
+  const handleReject = useCallback((comment: string) => {
+    if (!selectedScenario) return;
+    
+    const now = new Date().toISOString();
+    const updatedScenario: Scenario = {
+      ...selectedScenario,
+      status: 'needs-revision',
+      reviewedAt: now,
+      reviewedBy: 'current-approver', // In real app, get from auth
+      reviewComment: comment,
+      lastModified: now,
+    };
+    
+    const idx = scenarios.findIndex(s => s.id === selectedScenario.id);
+    if (idx >= 0) {
+      scenarios[idx] = updatedScenario;
+      setSelectedScenario(updatedScenario);
+    }
+    
+    setRejectModalOpen(false);
+  }, [selectedScenario]);
+
+  const handlePublish = useCallback((visibility: string) => {
+    if (!selectedScenario) return;
+    
+    // Only publish if scenario is approved
+    if (selectedScenario.status !== 'approved') return;
+    
+    const updatedScenario: Scenario = {
+      ...selectedScenario,
+      status: 'published',
+      publishedVisibility: visibility as 'approved' | 'in-development' | 'experimental',
+      lastModified: new Date().toISOString(),
+    };
+    
+    const idx = scenarios.findIndex(s => s.id === selectedScenario.id);
+    if (idx >= 0) {
+      scenarios[idx] = updatedScenario;
+      setSelectedScenario(updatedScenario);
+    }
+    
+    setPublishModalOpen(false);
+  }, [selectedScenario]);
 
   // Determine Editor Mode based on role and scenario status
   const getEditorMode = (): ScenarioEditorMode => {
@@ -236,9 +323,9 @@ export default function ConstructorPage() {
                 mode={getEditorMode()}
                 onSave={() => {}}
                 onSaveAsNew={() => {}}
-                onSendForReview={() => {}}
-                onApprove={() => {}}
-                onReject={() => {}}
+                onSendForReview={handleSendForReview}
+                onApprove={handleApprove}
+                onReject={() => setRejectModalOpen(true)}
                 onPublish={() => setPublishModalOpen(true)}
                 onExport={() => {}}
                 onArchive={() => {}}
@@ -308,7 +395,16 @@ export default function ConstructorPage() {
           open={publishModalOpen}
           onOpenChange={setPublishModalOpen}
           scenario={selectedScenario}
-          onPublish={() => {}}
+          onPublish={handlePublish}
+        />
+      )}
+
+      {selectedScenario && (
+        <RejectScenarioModal
+          open={rejectModalOpen}
+          onOpenChange={setRejectModalOpen}
+          scenario={selectedScenario}
+          onReject={handleReject}
         />
       )}
     </AppShell>

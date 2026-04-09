@@ -7,6 +7,8 @@ export type ScenarioStatus =
   | 'draft' 
   | 'validation-error' 
   | 'ready-for-review' 
+  | 'needs-revision'
+  | 'approved' 
   | 'published' 
   | 'archived';
 
@@ -30,6 +32,13 @@ export interface Scenario {
   validationIssues?: string[];
   hasUnsavedChanges?: boolean;
   publishedVisibility?: 'approved' | 'in-development' | 'experimental';
+  
+  // Review workflow metadata
+  submittedAt?: string;
+  submittedBy?: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  reviewComment?: string;
 }
 
 export interface ScenarioVersion {
@@ -79,6 +88,8 @@ export const scenarios: Scenario[] = [
     createdAt: '2026-02-10',
     lastModified: '2026-03-28',
     version: 5,
+    submittedAt: '2026-04-09T10:00:00Z',
+    submittedBy: 'Иванов А.С.',
   },
   {
     id: 'alt-2',
@@ -156,6 +167,8 @@ export function getScenarioStatusLabel(status: ScenarioStatus): string {
     case 'draft': return 'Черновик';
     case 'validation-error': return 'Ошибки валидации';
     case 'ready-for-review': return 'Готов к рассмотрению';
+    case 'needs-revision': return 'Требуется доработка';
+    case 'approved': return 'Одобрен';
     case 'published': return 'Опубликован';
     case 'archived': return 'Архивный';
   }
