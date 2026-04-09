@@ -15,8 +15,9 @@ import {
   Clock,
   Lock,
   Plus,
-  Minus,
-  Info
+  Info,
+  RotateCcw,
+  GitCompare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,24 +43,34 @@ import {
   DraftEntityBadge
 } from '@/components/ui/states';
 
+export type ScenarioEditorMode = 'edit' | 'review' | 'readonly';
+
 interface ScenarioEditorProps {
   scenario: Scenario;
+  mode?: ScenarioEditorMode;
   onSave?: () => void;
   onSaveAsNew?: () => void;
   onSendForReview?: () => void;
+  onApprove?: () => void;
+  onReject?: () => void;
   onPublish?: () => void;
   onExport?: () => void;
   onArchive?: () => void;
+  onOpenCompare?: () => void;
 }
 
 export function ScenarioEditor({
   scenario,
+  mode = 'edit',
   onSave,
   onSaveAsNew,
   onSendForReview,
+  onApprove,
+  onReject,
   onPublish,
   onExport,
   onArchive,
+  onOpenCompare,
 }: ScenarioEditorProps) {
   const { can } = usePermission();
   const [isKpiOpen, setIsKpiOpen] = useState(true);
@@ -69,7 +80,11 @@ export function ScenarioEditor({
   const [isValidationOpen, setIsValidationOpen] = useState(true);
 
   const scenarioProjects = projects.filter(p => scenario.projectIds.includes(p.id));
-  const isReadOnly = scenario.isBase;
+  const isBase = scenario.isBase;
+  const isReadOnlyMode = mode === 'readonly' || isBase;
+  const isReviewMode = mode === 'review';
+  const isEditMode = mode === 'edit' && !isBase;
+  
   const hasErrors = scenario.validationIssues && scenario.validationIssues.length > 0;
 
   return (
@@ -77,16 +92,24 @@ export function ScenarioEditor({
       {/* Main editing area */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-6">
-          {/* Read-only banner for base scenario */}
-          {isReadOnly && (
+          {/* Read-only banner for base scenario or readonly mode */}
+          {isReadOnlyMode && (
             <ReadOnlyBanner 
               className="mb-4" 
-              message="Базовый сценарий. Создайте копию для редактирования."
+              message={isBase ? "Базовый сценарий. Создайте копию для редактирования." : "Режим только для чтения."}
             />
           )}
 
+          {/* Review mode banner */}
+          {isReviewMode && (
+            <div className="mb-4 flex items-center gap-3 p-3 rounded-xl border border-sm-blue/20 bg-sm-blue/5 text-sm-blue">
+              <Clock className="h-4 w-4" />
+              <span className="text-sm font-medium">Режим согласования. Поля заблокированы для редактирования.</span>
+            </div>
+          )}
+
           {/* Unsaved changes banner */}
-          {scenario.hasUnsavedChanges && !isReadOnly && (
+          {scenario.hasUnsavedChanges && isEditMode && (
             <UnsavedChangesBanner 
               className="mb-4"
               onSave={onSave}
@@ -101,13 +124,13 @@ export function ScenarioEditor({
                 <div className="flex items-center gap-3 mb-2">
                   <Input
                     value={scenario.name}
-                    disabled={isReadOnly}
+                    disabled={!isEditMode}
                     className={cn(
                       'text-xl font-semibold h-auto py-1 px-2 -ml-2',
-                      isReadOnly && 'border-transparent bg-transparent'
+                      !isEditMode && 'border-transparent bg-transparent'
                     )}
                   />
-                  {isReadOnly && <Lock className="h-4 w-4 text-muted-foreground" />}
+                  {!isEditMode && <Lock className="h-4 w-4 text-muted-foreground" />}
                   {scenario.status === 'draft' && <DraftEntityBadge />}
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -188,7 +211,7 @@ export function ScenarioEditor({
                         return (
                           <tr key={project.id} className={cn('border-t border-border', !isIncluded && 'opacity-50')}>
                             <td className="px-4 py-3">
-                              <Switch checked={isIncluded} disabled={isReadOnly} />
+                              <Switch checked={isIncluded} disabled={!isEditMode} />
                             </td>
                             <td className="px-4 py-3 font-medium text-foreground">
                               {project.name}
@@ -206,7 +229,7 @@ export function ScenarioEditor({
                     </tbody>
                   </table>
                 </div>
-                {!isReadOnly && (
+                {isEditMode && (
                   <div className="border-t border-border p-3 bg-secondary/30">
                     <Button variant="ghost" size="sm" className="gap-1.5">
                       <Plus className="h-3.5 w-3.5" />
@@ -231,7 +254,7 @@ export function ScenarioEditor({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Горизонт планирования</label>
-                    <Select defaultValue="2050" disabled={isReadOnly}>
+                    <Select defaultValue="2050" disabled={!isEditMode}>
                       <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
@@ -245,11 +268,11 @@ export function ScenarioEditor({
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Ставка дисконтирования</label>
-                    <Input defaultValue="6%" disabled={isReadOnly} className="h-9" />
+                    <Input defaultValue="6%" disabled={!isEditMode} className="h-9" />
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Сценарий макроэкономики</label>
-                    <Select defaultValue="base" disabled={isReadOnly}>
+                    <Select defaultValue="base" disabled={!isEditMode}>
                       <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
@@ -262,7 +285,7 @@ export function ScenarioEditor({
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Прогноз пассажиропотока</label>
-                    <Select defaultValue="moderate" disabled={isReadOnly}>
+                    <Select defaultValue="moderate" disabled={!isEditMode}>
                       <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
@@ -301,15 +324,15 @@ export function ScenarioEditor({
       </div>
 
       {/* Actions panel */}
-      <div className="w-64 border-l border-border bg-secondary/30 p-4">
+      <div className="w-64 border-l border-border bg-secondary/30 p-4 flex flex-col h-full">
         <h3 className="mb-4 text-sm font-semibold text-foreground">Действия</h3>
         
-        <div className="space-y-2">
-          {can('edit:scenario') && (
+        <div className="space-y-2 flex-1 overflow-y-auto pr-1">
+          {/* Edit Actions */}
+          {isEditMode && can('edit:scenario') && (
             <>
               <Button 
                 className="w-full justify-start gap-2" 
-                disabled={isReadOnly}
                 onClick={onSave}
               >
                 <Save className="h-4 w-4" />
@@ -322,7 +345,7 @@ export function ScenarioEditor({
                 onClick={onSaveAsNew}
               >
                 <Copy className="h-4 w-4" />
-                Сохранить как новый
+                Копировать
               </Button>
 
               <div className="h-px bg-border my-3" />
@@ -330,27 +353,59 @@ export function ScenarioEditor({
               <Button 
                 variant="outline" 
                 className="w-full justify-start gap-2"
-                disabled={isReadOnly || hasErrors}
+                disabled={hasErrors}
                 onClick={onSendForReview}
               >
                 <Send className="h-4 w-4" />
-                На рассмотрение
+                На согласование
               </Button>
             </>
           )}
 
-          {can('approve:scenario') && (
-            <Button 
-              variant="outline" 
-              className="w-full justify-start gap-2"
-              disabled={isReadOnly || scenario.status !== 'ready-for-review'}
-              onClick={onPublish}
-            >
-              <Globe className="h-4 w-4" />
-              Опубликовать
-            </Button>
+          {/* Review Actions */}
+          {isReviewMode && can('approve:scenario') && (
+            <>
+              <Button 
+                className="w-full justify-start gap-2 bg-implementation-green hover:bg-implementation-green/90 text-white border-none" 
+                onClick={onApprove}
+              >
+                <CheckCircle className="h-4 w-4" />
+                Одобрить
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full justify-start gap-2 text-destructive hover:text-destructive border-destructive/20"
+                onClick={onReject}
+              >
+                <RotateCcw className="h-4 w-4" />
+                На доработку
+              </Button>
+
+              <div className="h-px bg-border my-3" />
+
+              <Button 
+                variant="secondary" 
+                className="w-full justify-start gap-2"
+                onClick={onOpenCompare}
+              >
+                <GitCompare className="h-4 w-4" />
+                Открыть сравнение
+              </Button>
+
+              <Button 
+                variant="outline" 
+                className="w-full justify-start gap-2"
+                disabled={scenario.status !== 'ready-for-review'}
+                onClick={onPublish}
+              >
+                <Globe className="h-4 w-4" />
+                Опубликовать
+              </Button>
+            </>
           )}
 
+          {/* Common Actions */}
           <div className="h-px bg-border my-3" />
 
           <Button 
@@ -362,11 +417,10 @@ export function ScenarioEditor({
             Экспортировать
           </Button>
 
-          {can('edit:scenario') && (
+          {isEditMode && can('edit:scenario') && (
             <Button 
               variant="ghost" 
-              className="w-full justify-start gap-2 text-muted-foreground"
-              disabled={isReadOnly}
+              className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive"
               onClick={onArchive}
             >
               <Archive className="h-4 w-4" />
@@ -376,22 +430,18 @@ export function ScenarioEditor({
         </div>
 
         {/* Metadata */}
-        <div className="mt-8 space-y-3 text-xs text-muted-foreground">
+        <div className="mt-auto pt-6 space-y-3 text-xs text-muted-foreground border-t border-border/40">
           <div className="flex justify-between">
             <span>Версия</span>
             <span className="font-medium text-foreground">v{scenario.version}</span>
           </div>
           <div className="flex justify-between">
             <span>Автор</span>
-            <span className="font-medium text-foreground">{scenario.author}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Создан</span>
-            <span>{new Date(scenario.createdAt).toLocaleDateString('ru-RU')}</span>
+            <span className="font-medium text-foreground truncate ml-4" title={scenario.author}>{scenario.author}</span>
           </div>
           <div className="flex justify-between">
             <span>Изменён</span>
-            <span>{new Date(scenario.lastModified).toLocaleDateString('ru-RU')}</span>
+            <span className="font-medium text-foreground">{new Date(scenario.lastModified).toLocaleDateString('ru-RU')}</span>
           </div>
         </div>
       </div>
@@ -401,12 +451,12 @@ export function ScenarioEditor({
 
 function KpiItem({ label, value, unit }: { label: string; value: number; unit: string }) {
   return (
-    <div className="text-center p-3 rounded-lg bg-secondary/50">
-      <div className="text-lg font-semibold text-foreground tabular-nums">
+    <div className="text-center p-3 rounded-lg bg-secondary/50 border border-border/20">
+      <div className="text-lg font-bold text-foreground tabular-nums">
         {value.toLocaleString('ru-RU')}
       </div>
-      <div className="text-[10px] text-muted-foreground uppercase tracking-wide">{unit}</div>
-      <div className="mt-1 text-xs text-muted-foreground">{label}</div>
+      <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{unit}</div>
+      <div className="mt-1 text-[10px] text-muted-foreground leading-tight">{label}</div>
     </div>
   );
 }
@@ -423,7 +473,7 @@ function StatusBadge({ status }: { status: Scenario['status'] }) {
   const { icon: Icon, color } = config[status];
 
   return (
-    <div className={cn('inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium', color)}>
+    <div className={cn('inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold', color)}>
       <Icon className="h-3.5 w-3.5" />
       {getScenarioStatusLabel(status)}
     </div>

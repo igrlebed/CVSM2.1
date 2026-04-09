@@ -1,10 +1,16 @@
 import { useAuth } from '@/contexts/auth-context';
-import { Role } from '@/lib/auth';
 
-type Action = 
+export type Action = 
   | 'view:dashboard'
   | 'view:map'
+  | 'view:projects'
+  | 'view:constructor'
+  | 'view:scenario'
   | 'edit:scenario'
+  | 'create:scenario'
+  | 'import:data'
+  | 'compare:scenario'
+  | 'review:scenario'
   | 'approve:scenario'
   | 'manage:users';
 
@@ -17,11 +23,20 @@ export function usePermission() {
     switch (action) {
       case 'view:dashboard':
       case 'view:map':
+      case 'view:projects':
         return ['operator', 'analyst', 'approver', 'admin'].includes(user.role);
       
-      case 'edit:scenario':
+      case 'view:constructor':
+      case 'view:scenario':
+      case 'compare:scenario':
         return ['analyst', 'approver', 'admin'].includes(user.role);
+
+      case 'create:scenario':
+      case 'edit:scenario':
+      case 'import:data':
+        return ['analyst', 'admin'].includes(user.role);
       
+      case 'review:scenario':
       case 'approve:scenario':
         return ['approver', 'admin'].includes(user.role);
       
@@ -33,5 +48,5 @@ export function usePermission() {
     }
   };
 
-  return { can };
+  return { can, role: user?.role };
 }

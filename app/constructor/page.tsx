@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { usePermission } from '@/hooks/use-permission';
 import { AppShell } from '@/components/app-shell';
 import { Button } from '@/components/ui/button';
@@ -15,17 +15,27 @@ import {
 import { cn } from '@/lib/utils';
 import { scenarios, scenarioVersions, Scenario } from '@/lib/data';
 import { ScenarioList } from '@/components/constructor/scenario-list';
-import { ScenarioEditor } from '@/components/constructor/scenario-editor';
+import { ScenarioEditor, ScenarioEditorMode } from '@/components/constructor/scenario-editor';
 import { ScenarioCompare } from '@/components/constructor/scenario-compare';
 import { ImportDataModal } from '@/components/constructor/import-data-modal';
 import { NewRouteEditor, RouteUploadedState } from '@/components/constructor/new-route-editor';
 import { PublishScenarioModal } from '@/components/constructor/publish-scenario-modal';
 import { VersionHistory } from '@/components/constructor/version-history';
+import { CompareSelectionBar } from '@/components/constructor/compare-selection-bar';
+import { AccessDeniedState } from '@/components/ui/access-denied-state';
 
 type ConstructorMode = 'list' | 'edit' | 'compare' | 'new-route' | 'route-uploaded' | 'history';
 
 export default function ConstructorPage() {
-  const { can } = usePermission();
+  const { can, role } = usePermission();
+  
+  // Guard: basic access to constructor
+  const canViewConstructor = can('view:constructor');
+  const canCreateScenario = can('create:scenario');
+  const canEditScenario = can('edit:scenario');
+  const canApproveScenario = can('approve:scenario');
+  const canCompareScenario = can('compare:scenario');
+
   const [mode, setMode] = useState<ConstructorMode>('list');
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -38,6 +48,7 @@ export default function ConstructorPage() {
   };
 
   const handleAddToCompare = (scenario: Scenario) => {
+    if (!canCompareScenario) return;
     setCompareIds(prev => 
       prev.includes(scenario.id) 
         ? prev.filter(id => id !== scenario.id)
@@ -49,8 +60,12 @@ export default function ConstructorPage() {
     setCompareIds(prev => prev.filter(i => i !== id));
   };
 
+  const handleClearSelection = () => {
+    setCompareIds([]);
+  };
+
   const handleOpenCompare = () => {
-    if (compareIds.length >= 2) {
+    if (canCompareScenario && compareIds.length >= 2) {
       setMode('compare');
     }
   };
@@ -64,11 +79,33 @@ export default function ConstructorPage() {
     }
   };
 
+  // Determine Editor Mode based on role and scenario status
+  const getEditorMode = (): ScenarioEditorMode => {
+    if (!selectedScenario) return 'readonly';
+    if (selectedScenario.isBase) return 'readonly';
+    
+    if (role === 'approver' || role === 'admin') {
+      if (selectedScenario.status === 'ready-for-review') return 'review';
+    }
+    
+    if (canEditScenario) return 'edit';
+    
+    return 'readonly';
+  };
+
+  if (!canViewConstructor) {
+    return (
+      <AppShell>
+        <AccessDeniedState />
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell>
-      <div className="flex h-[calc(100vh-4rem)]">
-        {/* Left sidebar - Scenario list (always visible except in some modes) */}
-        {(mode === 'list' || mode === 'edit') && (
+      <div className="flex h-[calc(100vh-4rem)] relative">
+        {/* Left sidebar - Scenario list */}
+        {(mode === 'list' || mode === 'edit' || mode === 'history') && (
           <div className="w-72 border-r border-border bg-card flex-shrink-0">
             <ScenarioList
               scenarios={scenarios}
@@ -76,9 +113,9 @@ export default function ConstructorPage() {
               compareIds={compareIds}
               onSelect={handleSelectScenario}
               onAddToCompare={handleAddToCompare}
-              onCreateNew={() => {}}
-              onDelete={() => {}}
-              onArchive={() => {}}
+              onCreateNew={canCreateScenario ? () => {} : undefined}
+              onDelete={canEditScenario ? () => {} : undefined}
+              onArchive={canEditScenario ? () => {} : undefined}
             />
           </div>
         )}
@@ -106,7 +143,7 @@ export default function ConstructorPage() {
             <div className="flex items-center gap-2">
               {mode === 'list' && (
                 <>
-                  {can('edit:scenario') && (
+                  {canEditScenario && (
                     <>
                       <Button 
                         variant="outline" 
@@ -128,16 +165,18 @@ export default function ConstructorPage() {
                       </Button>
                     </>
                   )}
-                  <Button 
-                    variant={compareIds.length >= 2 ? 'default' : 'outline'}
-                    size="sm" 
-                    className="gap-1.5"
-                    onClick={handleOpenCompare}
-                    disabled={compareIds.length < 2}
-                  >
-                    <GitCompare className="h-3.5 w-3.5" />
-                    Сравнить ({compareIds.length})
-                  </Button>
+                  {canCompareScenario && (
+                    <Button 
+                      variant={compareIds.length >= 2 ? 'default' : 'outline'}
+                      size="sm" 
+                      className="gap-1.5"
+                      onClick={handleOpenCompare}
+                      disabled={compareIds.length < 2}
+                    >
+                      <GitCompare className="h-3.5 w-3.5" />
+                      Сравнить ({compareIds.length})
+                    </Button>
+                  )}
                 </>
               )}
               {mode === 'edit' && selectedScenario && (
@@ -166,10 +205,10 @@ export default function ConstructorPage() {
                     Выберите сценарий
                   </h2>
                   <p className="text-sm text-muted-foreground mb-6">
-                    Выберите сценарий из списка слева для редактирования или создайте новый
+                    Выберите сценарий из списка слева для {canEditScenario ? 'редактирования' : 'просмотра'} или создайте новый
                   </p>
                   <div className="flex justify-center gap-3">
-                    {can('edit:scenario') && (
+                    {canCreateScenario && (
                       <>
                         <Button variant="outline" onClick={() => {}}>
                           <Plus className="mr-2 h-4 w-4" />
@@ -189,12 +228,16 @@ export default function ConstructorPage() {
             {mode === 'edit' && selectedScenario && (
               <ScenarioEditor
                 scenario={selectedScenario}
+                mode={getEditorMode()}
                 onSave={() => {}}
                 onSaveAsNew={() => {}}
                 onSendForReview={() => {}}
+                onApprove={() => {}}
+                onReject={() => {}}
                 onPublish={() => setPublishModalOpen(true)}
                 onExport={() => {}}
                 onArchive={() => {}}
+                onOpenCompare={handleOpenCompare}
               />
             )}
 
@@ -237,6 +280,15 @@ export default function ConstructorPage() {
             )}
           </div>
         </div>
+
+        {/* Persistent Compare Bar */}
+        {mode !== 'compare' && compareIds.length > 0 && canCompareScenario && (
+          <CompareSelectionBar
+            count={compareIds.length}
+            onCompare={handleOpenCompare}
+            onClear={handleClearSelection}
+          />
+        )}
       </div>
 
       {/* Modals */}

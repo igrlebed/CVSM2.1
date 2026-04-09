@@ -12,7 +12,8 @@ import {
   Archive,
   FileEdit,
   GitCompare,
-  Trash2
+  Trash2,
+  Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -183,38 +184,53 @@ function ScenarioCard({
   return (
     <div
       className={cn(
-        'group relative rounded-lg border p-3 transition-all cursor-pointer',
+        'group relative rounded-lg border p-3 transition-all cursor-pointer flex flex-col gap-2',
         isSelected 
-          ? 'border-primary bg-primary/5' 
-          : 'border-transparent hover:border-border hover:bg-secondary/50',
+          ? 'border-primary bg-primary/5 shadow-sm' 
+          : 'border-border/40 bg-card hover:border-border hover:bg-secondary/50',
+        isInCompare && 'border-sm-blue/50 ring-1 ring-sm-blue/20',
         scenario.status === 'archived' && 'opacity-60'
       )}
       onClick={onClick}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <span className="truncate text-sm font-medium text-foreground">
-              {scenario.name}
-            </span>
-            {scenario.isBase && (
-              <Lock className="h-3 w-3 shrink-0 text-muted-foreground" />
+      {/* Compare Control - Visible direct action */}
+      <div className="absolute right-2 top-2 z-10 flex items-center gap-1">
+        {onAddToCompare && (
+          <Button
+            variant={isInCompare ? "default" : "outline"}
+            size="sm"
+            className={cn(
+              "h-7 px-2 text-[10px] font-medium transition-all gap-1 rounded-md border-border/50 shadow-none",
+              isInCompare 
+                ? "bg-sm-blue hover:bg-sm-blue/90 text-white border-transparent" 
+                : "bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100"
             )}
-            {scenario.hasUnsavedChanges && (
-              <span className="h-2 w-2 shrink-0 rounded-full bg-amber-500" title="Несохранённые изменения" />
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToCompare();
+            }}
+            aria-label={isInCompare ? "Убрать из сравнения" : "Добавить к сравнению"}
+          >
+            {isInCompare ? (
+              <>
+                <Check className="h-3 w-3" />
+                <span>В сравнении</span>
+              </>
+            ) : (
+              <>
+                <GitCompare className="h-3 w-3" />
+                <span>Сравнить</span>
+              </>
             )}
-          </div>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            {scenario.description}
-          </p>
-        </div>
+          </Button>
+        )}
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
             <Button 
               variant="ghost" 
               size="icon" 
-              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity rounded-md"
             >
               <MoreVertical className="h-4 w-4" />
             </Button>
@@ -248,27 +264,57 @@ function ScenarioCard({
         </DropdownMenu>
       </div>
 
-      {/* Metadata row */}
-      <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
-        <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5', getStatusColor(scenario.status))}>
-          {getStatusIcon(scenario.status)}
-          {getScenarioStatusLabel(scenario.status)}
-        </span>
-        <span>{scenario.projectIds.length} проектов</span>
-        <span>{scenario.networkLength.toLocaleString('ru-RU')} км</span>
-      </div>
-
-      {/* Last modified */}
-      <div className="mt-1.5 text-[10px] text-muted-foreground">
-        Изменён {new Date(scenario.lastModified).toLocaleDateString('ru-RU')} · {scenario.author}
-      </div>
-
-      {/* Compare indicator */}
-      {isInCompare && (
-        <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-sm-blue text-[10px] font-medium text-white">
-          <GitCompare className="h-3 w-3" />
+      {/* Header row: Title */}
+      <div className="pr-16 min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span className="truncate text-sm font-semibold text-foreground">
+            {scenario.name}
+          </span>
+          {scenario.isBase && (
+            <Lock className="h-3 w-3 shrink-0 text-muted-foreground" />
+          )}
+          {scenario.hasUnsavedChanges && (
+            <span className="h-2 w-2 shrink-0 rounded-full bg-amber-500" title="Несохранённые изменения" />
+          )}
         </div>
+      </div>
+
+      {/* Description row */}
+      {scenario.description && (
+        <p className="line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
+          {scenario.description}
+        </p>
       )}
+
+      {/* Status & Metadata row */}
+      <div className="mt-auto flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+          <span className={cn(
+            'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium leading-none whitespace-nowrap', 
+            getStatusColor(scenario.status)
+          )}>
+            {getStatusIcon(scenario.status)}
+            {getScenarioStatusLabel(scenario.status)}
+          </span>
+          
+          <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <span className="h-1 w-1 rounded-full bg-border" />
+              {scenario.projectIds.length} проектов
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="h-1 w-1 rounded-full bg-border" />
+              {scenario.networkLength.toLocaleString('ru-RU')} км
+            </span>
+          </div>
+        </div>
+
+        {/* Footer: Date & Author */}
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground/70 border-t border-border/40 pt-1.5">
+          <span>{new Date(scenario.lastModified).toLocaleDateString('ru-RU')}</span>
+          <span className="truncate max-w-[100px]">{scenario.author}</span>
+        </div>
+      </div>
     </div>
   );
 }
