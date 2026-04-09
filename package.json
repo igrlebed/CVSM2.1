@@ -2,6 +2,7 @@
   "name": "my-project",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.12.3",
   "scripts": {
     "dev": "__NEXT_DEVTOOLS_NEW_PANEL_UI=0 next dev --webpack",
     "build": "next build",
