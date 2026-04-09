@@ -83,13 +83,18 @@ export default function ConstructorPage() {
   const getEditorMode = (): ScenarioEditorMode => {
     if (!selectedScenario) return 'readonly';
     if (selectedScenario.isBase) return 'readonly';
-    
-    if (role === 'approver' || role === 'admin') {
-      if (selectedScenario.status === 'ready-for-review') return 'review';
+
+    // Approver: never full edit. Only review when scenario is ready, otherwise readonly.
+    if (role === 'approver') {
+      return selectedScenario.status === 'ready-for-review' ? 'review' : 'readonly';
     }
-    
+
+    // Admin: full access (except base).
+    if (role === 'admin') return 'edit';
+
+    // Analyst: edit when allowed.
     if (canEditScenario) return 'edit';
-    
+
     return 'readonly';
   };
 

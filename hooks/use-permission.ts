@@ -4,6 +4,8 @@ export type Action =
   | 'view:dashboard'
   | 'view:map'
   | 'view:projects'
+  | 'view:archive'
+  | 'view:export'
   | 'view:constructor'
   | 'view:scenario'
   | 'edit:scenario'
@@ -25,6 +27,10 @@ export function usePermission() {
       case 'view:map':
       case 'view:projects':
         return ['operator', 'analyst', 'approver', 'admin'].includes(user.role);
+
+      case 'view:archive':
+      case 'view:export':
+        return ['analyst', 'approver', 'admin'].includes(user.role);
       
       case 'view:constructor':
       case 'view:scenario':

@@ -13,21 +13,23 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/auth-context';
+import { usePermission } from '@/hooks/use-permission';
 import { ROLE_LABELS } from '@/lib/auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 const navigation = [
-  { name: 'Обзор сети', href: '/' },
-  { name: 'Карта сети', href: '/map' },
-  { name: 'Проекты', href: '/projects' },
-  { name: 'Конструктор', href: '/constructor' },
-  { name: 'Архив', href: '/archive' },
-  { name: 'Экспорт', href: '/export' },
+  { name: 'Обзор сети', href: '/', permission: 'view:dashboard' },
+  { name: 'Карта сети', href: '/map', permission: 'view:map' },
+  { name: 'Проекты', href: '/projects', permission: 'view:projects' },
+  { name: 'Конструктор', href: '/constructor', permission: 'view:constructor' },
+  { name: 'Архив', href: '/archive', permission: 'view:archive' },
+  { name: 'Экспорт', href: '/export', permission: 'view:export' },
 ];
 
 export function AppHeader() {
   const { user, logout } = useAuth();
+  const { can } = usePermission();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
@@ -67,6 +69,8 @@ export function AppHeader() {
         {/* Center: Navigation */}
         <nav className="flex items-center gap-1">
           {navigation.map((item) => {
+            if (item.permission && !can(item.permission as any)) return null;
+
             const isActive = pathname === item.href || 
               (item.href !== '/' && pathname.startsWith(item.href));
             

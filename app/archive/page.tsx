@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AppShell } from '@/components/app-shell';
+import { usePermission } from '@/hooks/use-permission';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,10 +22,12 @@ import {
 import { cn } from '@/lib/utils';
 import { archiveItems, ArchiveItem } from '@/lib/data';
 import { NoSearchResultsState, ArchivedEntityState } from '@/components/ui/states';
+import { AccessDeniedState } from '@/components/ui/access-denied-state';
 
 type ArchiveTab = 'scenarios' | 'exports' | 'decisions';
 
 export default function ArchivePage() {
+  const { can } = usePermission();
   const [activeTab, setActiveTab] = useState<ArchiveTab>('scenarios');
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<ArchiveItem | null>(null);
@@ -60,6 +63,9 @@ export default function ArchivePage() {
 
   return (
     <AppShell>
+      {!can('view:archive') ? (
+        <AccessDeniedState />
+      ) : (
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Main content */}
         <div className="flex-1 flex flex-col">
@@ -261,6 +267,7 @@ export default function ArchivePage() {
           </div>
         )}
       </div>
+      )}
     </AppShell>
   );
 }

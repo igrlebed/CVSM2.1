@@ -15,6 +15,17 @@ interface ProjectsRankingViewProps {
   onExport: () => void;
 }
 
+type RankedItem = {
+  project: RouteProject;
+  score: number;
+  groupScores: Record<string, number>;
+};
+
+type RankedProjects = {
+  domestic: RankedItem[];
+  international: RankedItem[];
+};
+
 export function ProjectsRankingView({ onOpenCard, onExport }: ProjectsRankingViewProps) {
   const [rankingGroups, setRankingGroups] = useState<RankingGroup[]>(defaultRankingGroups);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(rankingGroups.map(g => g.id));
@@ -44,18 +55,18 @@ export function ProjectsRankingView({ onOpenCard, onExport }: ProjectsRankingVie
   };
 
   // Calculate rankings
-  const rankedProjects = useMemo(() => {
+  const rankedProjects = useMemo<RankedProjects>(() => {
     const activeProjects = allProjects.filter(p => p.status !== 'archived');
     const enabledGroups = rankingGroups.filter(g => g.enabled);
 
     if (enabledGroups.length === 0) {
-      return [];
+      return { domestic: [], international: [] };
     }
 
     // Normalize weights to sum to 100
     const totalWeight = enabledGroups.reduce((sum, g) => sum + g.weight, 0);
 
-    const scores = activeProjects.map(project => {
+    const scores: RankedItem[] = activeProjects.map(project => {
       let totalScore = 0;
       const groupScores: Record<string, number> = {};
 
