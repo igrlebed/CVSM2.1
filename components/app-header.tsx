@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Download, ChevronDown } from 'lucide-react';
+import { Search, Download, ChevronDown, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,6 +12,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/contexts/auth-context';
+import { ROLE_LABELS } from '@/lib/auth';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 
 const navigation = [
   { name: 'Обзор сети', href: '/' },
@@ -22,17 +26,8 @@ const navigation = [
   { name: 'Экспорт', href: '/export' },
 ];
 
-interface AppHeaderProps {
-  role: 'lpr' | 'analyst';
-  onRoleChange: (role: 'lpr' | 'analyst') => void;
-}
-
-const roleLabels = {
-  lpr: 'ЛПР',
-  analyst: 'Аналитик',
-} as const;
-
-export function AppHeader({ role, onRoleChange }: AppHeaderProps) {
+export function AppHeader() {
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
 
@@ -40,8 +35,7 @@ export function AppHeader({ role, onRoleChange }: AppHeaderProps) {
     setMounted(true);
   }, []);
 
-  // Use a stable initial value for SSR to prevent hydration mismatch
-  const displayRole = mounted ? roleLabels[role] : '\u00A0\u00A0\u00A0';
+  if (!mounted) return null;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -105,27 +99,35 @@ export function AppHeader({ role, onRoleChange }: AppHeaderProps) {
             <span className="sr-only">Экспорт</span>
           </Button>
 
+          <div className="h-8 w-px bg-border mx-2" />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-9 gap-2">
-                <span className="text-xs font-medium min-w-[60px] text-center">
-                  {displayRole}
-                </span>
-                <ChevronDown className="h-3 w-3" />
+              <Button variant="ghost" className="h-10 gap-3 px-2 hover:bg-secondary/50">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user?.avatar} alt={user?.name} />
+                  <AvatarFallback>{user?.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col items-start text-left hidden md:flex">
+                  <span className="text-sm font-medium leading-none">{user?.name}</span>
+                  <Badge variant="secondary" className="mt-1 text-[10px] h-4 px-1 uppercase">
+                    {user ? ROLE_LABELS[user.role] : ''}
+                  </Badge>
+                </div>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onRoleChange('lpr')}>
-                <span className="font-medium">ЛПР</span>
-                <span className="ml-2 text-xs text-muted-foreground">
-                  Лицо, принимающее решения
-                </span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRoleChange('analyst')}>
-                <span className="font-medium">Аналитик</span>
-                <span className="ml-2 text-xs text-muted-foreground">
-                  Анализ и сравнение
-                </span>
+            <DropdownMenuContent align="end" className="w-56">
+              <div className="flex items-center justify-start gap-2 p-2">
+                <div className="flex flex-col space-y-0.5">
+                  <p className="text-sm font-medium">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground">{user ? ROLE_LABELS[user.role] : ''}</p>
+                </div>
+              </div>
+              <div className="h-px bg-border my-1" />
+              <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Выйти</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { usePermission } from '@/hooks/use-permission';
 import { 
   Save, 
   Copy, 
@@ -60,6 +61,7 @@ export function ScenarioEditor({
   onExport,
   onArchive,
 }: ScenarioEditorProps) {
+  const { can } = usePermission();
   const [isKpiOpen, setIsKpiOpen] = useState(true);
   const [isProjectsOpen, setIsProjectsOpen] = useState(true);
   const [isParamsOpen, setIsParamsOpen] = useState(false);
@@ -303,45 +305,51 @@ export function ScenarioEditor({
         <h3 className="mb-4 text-sm font-semibold text-foreground">Действия</h3>
         
         <div className="space-y-2">
-          <Button 
-            className="w-full justify-start gap-2" 
-            disabled={isReadOnly}
-            onClick={onSave}
-          >
-            <Save className="h-4 w-4" />
-            Сохранить
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2"
-            onClick={onSaveAsNew}
-          >
-            <Copy className="h-4 w-4" />
-            Сохранить как новый
-          </Button>
+          {can('edit:scenario') && (
+            <>
+              <Button 
+                className="w-full justify-start gap-2" 
+                disabled={isReadOnly}
+                onClick={onSave}
+              >
+                <Save className="h-4 w-4" />
+                Сохранить
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full justify-start gap-2"
+                onClick={onSaveAsNew}
+              >
+                <Copy className="h-4 w-4" />
+                Сохранить как новый
+              </Button>
 
-          <div className="h-px bg-border my-3" />
+              <div className="h-px bg-border my-3" />
 
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2"
-            disabled={isReadOnly || hasErrors}
-            onClick={onSendForReview}
-          >
-            <Send className="h-4 w-4" />
-            На рассмотрение
-          </Button>
+              <Button 
+                variant="outline" 
+                className="w-full justify-start gap-2"
+                disabled={isReadOnly || hasErrors}
+                onClick={onSendForReview}
+              >
+                <Send className="h-4 w-4" />
+                На рассмотрение
+              </Button>
+            </>
+          )}
 
-          <Button 
-            variant="outline" 
-            className="w-full justify-start gap-2"
-            disabled={isReadOnly || scenario.status !== 'ready-for-review'}
-            onClick={onPublish}
-          >
-            <Globe className="h-4 w-4" />
-            Опубликовать
-          </Button>
+          {can('approve:scenario') && (
+            <Button 
+              variant="outline" 
+              className="w-full justify-start gap-2"
+              disabled={isReadOnly || scenario.status !== 'ready-for-review'}
+              onClick={onPublish}
+            >
+              <Globe className="h-4 w-4" />
+              Опубликовать
+            </Button>
+          )}
 
           <div className="h-px bg-border my-3" />
 
@@ -354,15 +362,17 @@ export function ScenarioEditor({
             Экспортировать
           </Button>
 
-          <Button 
-            variant="ghost" 
-            className="w-full justify-start gap-2 text-muted-foreground"
-            disabled={isReadOnly}
-            onClick={onArchive}
-          >
-            <Archive className="h-4 w-4" />
-            В архив
-          </Button>
+          {can('edit:scenario') && (
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start gap-2 text-muted-foreground"
+              disabled={isReadOnly}
+              onClick={onArchive}
+            >
+              <Archive className="h-4 w-4" />
+              В архив
+            </Button>
+          )}
         </div>
 
         {/* Metadata */}

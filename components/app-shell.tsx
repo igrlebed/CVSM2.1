@@ -27,15 +27,12 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const [role, setRole] = useState<Role>('lpr');
   const [selectedYear, setSelectedYear] = useState(2050);
 
   return (
-    <AppContext.Provider value={{ role, setRole, selectedYear, setSelectedYear }}>
-      <div className="min-h-screen bg-background">
-        <AppHeader role={role} onRoleChange={setRole} />
-        <main>{children}</main>
-      </div>
-    </AppContext.Provider>
+    <div className="min-h-screen bg-background">
+      <AppHeader />
+      <main>{children}</main>
+    </div>
   );
 }

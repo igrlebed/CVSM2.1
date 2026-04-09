@@ -14,13 +14,14 @@ import {
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+import { usePermission } from "@/hooks/use-permission"
 
 const navigation = [
   { name: "Обзор", href: "/", icon: LayoutDashboard },
   { name: "Проекты", href: "/projects", icon: FolderKanban },
-  { name: "Сеть", href: "/network", icon: Map },
-  { name: "Аналитика", href: "/analytics", icon: BarChart3 },
-  { name: "Отчёты", href: "/reports", icon: FileText },
+  { name: "Карта", href: "/map", icon: Map },
+  { name: "Конструктор", href: "/constructor", icon: BarChart3, permission: 'edit:scenario' },
+  { name: "Архив", href: "/archive", icon: FileText },
 ]
 
 const bottomNavigation = [
@@ -28,6 +29,7 @@ const bottomNavigation = [
 ]
 
 export function Sidebar() {
+  const { can } = usePermission()
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
 
@@ -54,6 +56,8 @@ export function Sidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 py-4 px-3 space-y-1">
         {navigation.map((item) => {
+          if (item.permission && !can(item.permission as any)) return null
+
           const isActive = pathname === item.href || 
             (item.href !== "/" && pathname.startsWith(item.href))
           

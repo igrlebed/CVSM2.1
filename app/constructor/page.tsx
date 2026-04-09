@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { usePermission } from '@/hooks/use-permission';
 import { AppShell } from '@/components/app-shell';
 import { Button } from '@/components/ui/button';
 import { 
@@ -24,6 +25,7 @@ import { VersionHistory } from '@/components/constructor/version-history';
 type ConstructorMode = 'list' | 'edit' | 'compare' | 'new-route' | 'route-uploaded' | 'history';
 
 export default function ConstructorPage() {
+  const { can } = usePermission();
   const [mode, setMode] = useState<ConstructorMode>('list');
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -104,24 +106,28 @@ export default function ConstructorPage() {
             <div className="flex items-center gap-2">
               {mode === 'list' && (
                 <>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-1.5"
-                    onClick={() => setMode('new-route')}
-                  >
-                    <Map className="h-3.5 w-3.5" />
-                    Новый маршрут
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="gap-1.5"
-                    onClick={() => setImportModalOpen(true)}
-                  >
-                    <Upload className="h-3.5 w-3.5" />
-                    Импорт данных
-                  </Button>
+                  {can('edit:scenario') && (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-1.5"
+                        onClick={() => setMode('new-route')}
+                      >
+                        <Map className="h-3.5 w-3.5" />
+                        Новый маршрут
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="gap-1.5"
+                        onClick={() => setImportModalOpen(true)}
+                      >
+                        <Upload className="h-3.5 w-3.5" />
+                        Импорт данных
+                      </Button>
+                    </>
+                  )}
                   <Button 
                     variant={compareIds.length >= 2 ? 'default' : 'outline'}
                     size="sm" 
@@ -163,14 +169,18 @@ export default function ConstructorPage() {
                     Выберите сценарий из списка слева для редактирования или создайте новый
                   </p>
                   <div className="flex justify-center gap-3">
-                    <Button variant="outline" onClick={() => {}}>
-                      <Plus className="mr-2 h-4 w-4" />
-                      Новый сценарий
-                    </Button>
-                    <Button variant="outline" onClick={() => setImportModalOpen(true)}>
-                      <Upload className="mr-2 h-4 w-4" />
-                      Импортировать
-                    </Button>
+                    {can('edit:scenario') && (
+                      <>
+                        <Button variant="outline" onClick={() => {}}>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Новый сценарий
+                        </Button>
+                        <Button variant="outline" onClick={() => setImportModalOpen(true)}>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Импортировать
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
