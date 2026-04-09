@@ -31,90 +31,95 @@ export default function OverviewPage() {
   return (
     <AppShell>
       {/* Desktop anchored grid: left content + right rail share one viewport height */}
-      <div className="h-[calc(100vh-4rem)] min-h-0 p-6 overflow-hidden">
-        <div className="grid grid-cols-[minmax(0,1fr)_360px] gap-6 h-full min-h-0">
-          {/* Left column */}
-          <div className="min-h-0 overflow-y-auto pr-1 space-y-6">
-            {/* Hero Summary */}
-            <div>
-              <h1 className="text-2xl font-semibold text-foreground mb-1">
-                Обзор сети ВСМ России
-              </h1>
-              <p className="text-muted-foreground">
-                Стратегическое планирование высокоскоростных и скоростных железнодорожных магистралей
-              </p>
-            </div>
-
-            {/* KPI Cards */}
-            <div className="grid grid-cols-6 gap-3">
-              <KPICard
-                label={kpiData.gdpGrowth.label}
-                value={kpiData.gdpGrowth.value}
-                unit={kpiData.gdpGrowth.unit}
-                description={kpiData.gdpGrowth.description}
-                trend={{ value: 12.4, direction: 'up' }}
-              />
-              <KPICard
-                label={kpiData.investment.label}
-                value={kpiData.investment.value}
-                unit={kpiData.investment.unit}
-                description={kpiData.investment.description}
-              />
-              <KPICard
-                label={kpiData.passengerFlow.label}
-                value={kpiData.passengerFlow.value}
-                unit={kpiData.passengerFlow.unit}
-                description={kpiData.passengerFlow.description}
-                trend={{ value: 8.2, direction: 'up' }}
-              />
-              <KPICard
-                label={kpiData.population.label}
-                value={kpiData.population.value}
-                unit={kpiData.population.unit}
-                description={kpiData.population.description}
-              />
-              <KPICard
-                label={kpiData.networkLength.label}
-                value={kpiData.networkLength.value}
-                unit={kpiData.networkLength.unit}
-                description={kpiData.networkLength.description}
-              />
-              <KPICard
-                label={kpiData.rollingStock.label}
-                value={kpiData.rollingStock.value}
-                unit={kpiData.rollingStock.unit}
-                description={kpiData.rollingStock.description}
-              />
-            </div>
-
-            {/* Map */}
-            <div className="rounded-2xl bg-card p-5 border border-border/40">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-semibold text-foreground">Схема сети</h2>
-                <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded-md">
-                  {visibleProjects.length} {visibleProjects.length === 1 ? 'маршрут' : 'маршрутов'} к {selectedYear} году
-                </span>
+      <div className="flex flex-col h-[calc(100vh-4rem)] min-h-0 overflow-hidden">
+        <div className="p-6 flex-1 min-h-0 flex flex-col">
+          <div className="grid grid-cols-[minmax(0,1fr)_360px] gap-6 h-full min-h-0">
+            {/* Left column */}
+            <div className="flex h-full min-h-0 flex-col pr-1">
+            {/* Top: title + KPI */}
+            <div className="shrink-0 space-y-6">
+              <div>
+                <h1 className="text-2xl font-semibold text-foreground mb-1">
+                  Обзор сети ВСМ России
+                </h1>
+                <p className="text-muted-foreground">
+                  Стратегическое планирование высокоскоростных и скоростных железнодорожных магистралей
+                </p>
               </div>
-              <div className="h-[340px]">
-                <NetworkMap
-                  projects={projects}
-                  selectedYear={selectedYear}
-                  onRouteClick={handleRouteClick}
-                  selectedRouteId={selectedProject?.id}
+
+              <div className="grid grid-cols-6 gap-3">
+                <KPICard
+                  label={kpiData.gdpGrowth.label}
+                  value={kpiData.gdpGrowth.value}
+                  unit={kpiData.gdpGrowth.unit}
+                  description={kpiData.gdpGrowth.description}
+                  trend={{ value: 12.4, direction: 'up' }}
+                />
+                <KPICard
+                  label={kpiData.investment.label}
+                  value={kpiData.investment.value}
+                  unit={kpiData.investment.unit}
+                  description={kpiData.investment.description}
+                />
+                <KPICard
+                  label={kpiData.passengerFlow.label}
+                  value={kpiData.passengerFlow.value}
+                  unit={kpiData.passengerFlow.unit}
+                  description={kpiData.passengerFlow.description}
+                  trend={{ value: 8.2, direction: 'up' }}
+                />
+                <KPICard
+                  label={kpiData.population.label}
+                  value={kpiData.population.value}
+                  unit={kpiData.population.unit}
+                  description={kpiData.population.description}
+                />
+                <KPICard
+                  label={kpiData.networkLength.label}
+                  value={kpiData.networkLength.value}
+                  unit={kpiData.networkLength.unit}
+                  description={kpiData.networkLength.description}
+                />
+                <KPICard
+                  label={kpiData.rollingStock.label}
+                  value={kpiData.rollingStock.value}
+                  unit={kpiData.rollingStock.unit}
+                  description={kpiData.rollingStock.description}
                 />
               </div>
             </div>
 
-            {/* Timeline */}
-            <div className="rounded-2xl bg-card p-5 border border-border/40">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Хронология развития</h3>
-              <TimelineSlider value={selectedYear} onChange={setSelectedYear} />
+            {/* Middle: flexible map */}
+            <div className="flex-1 min-h-0 pt-6">
+              <div className="rounded-2xl bg-card p-5 border border-border/40 h-full min-h-0 flex flex-col">
+                <div className="flex items-center justify-between mb-3 shrink-0">
+                  <h2 className="text-base font-semibold text-foreground">Схема сети</h2>
+                  <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded-md">
+                    {visibleProjects.length} {visibleProjects.length === 1 ? 'маршрут' : 'маршрутов'} к {selectedYear} году
+                  </span>
+                </div>
+                <div className="flex-1 min-h-0">
+                  <NetworkMap
+                    projects={projects}
+                    selectedYear={selectedYear}
+                    onRouteClick={handleRouteClick}
+                    selectedRouteId={selectedProject?.id}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="rounded-2xl bg-card p-5 border border-border/40">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Быстрые действия</h3>
-              <QuickActions />
+            {/* Bottom: timeline + quick actions (bottom-anchored) */}
+            <div className="mt-auto pt-6 space-y-4 shrink-0">
+              <div className="rounded-2xl bg-card p-5 border border-border/40">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Хронология развития</h3>
+                <TimelineSlider value={selectedYear} onChange={setSelectedYear} />
+              </div>
+
+              <div className="rounded-2xl bg-card p-5 border border-border/40">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Быстрые действия</h3>
+                <QuickActions />
+              </div>
             </div>
           </div>
 
@@ -139,6 +144,7 @@ export default function OverviewPage() {
               <SignalsBlock />
             </div>
           </div>
+        </div>
         </div>
       </div>
 

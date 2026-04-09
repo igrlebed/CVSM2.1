@@ -145,7 +145,9 @@ export function ScenarioCompare({
       case 'avgDuration':
         return 5.2; // Placeholder
       default:
-        return (scenario as Record<string, number>)[metricId] ?? 0;
+        // Safe fallback for metrics that map directly to numeric scenario fields.
+        // (Some metrics are derived above; this keeps typing strict without unsafe casts.)
+        return typeof (scenario as any)[metricId] === 'number' ? (scenario as any)[metricId] : 0;
     }
   };
 

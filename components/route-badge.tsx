@@ -25,8 +25,8 @@ export function RouteBadge({ type, size = 'sm', className }: RouteBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center justify-center font-bold rounded-full border whitespace-nowrap shrink-0',
-        size === 'sm' ? 'text-[9px] px-1.5 h-4.5 min-w-[32px]' : 'text-[10px] px-2 h-5 min-w-[40px]',
+        'inline-flex w-fit items-center justify-center font-bold rounded-full border whitespace-nowrap shrink-0',
+        size === 'sm' ? 'text-[9px] px-1.5 h-[18px] min-w-[32px]' : 'text-[10px] px-2 h-5 min-w-[40px]',
         styles[type],
         className
       )}

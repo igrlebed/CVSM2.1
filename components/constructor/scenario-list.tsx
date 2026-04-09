@@ -203,7 +203,7 @@ function ScenarioCard({
               "h-7 px-2 text-[10px] font-medium transition-all gap-1 rounded-md border-border/50 shadow-none",
               isInCompare 
                 ? "bg-sm-blue hover:bg-sm-blue/90 text-white border-transparent" 
-                : "bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100"
+                : "bg-background/80 backdrop-blur-sm"
             )}
             onClick={(e) => {
               e.stopPropagation();
@@ -219,7 +219,7 @@ function ScenarioCard({
             ) : (
               <>
                 <GitCompare className="h-3 w-3" />
-                <span>Сравнить</span>
+                <span>В сравнение</span>
               </>
             )}
           </Button>

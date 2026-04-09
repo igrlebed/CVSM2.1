@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AppShell } from '@/components/app-shell';
+import { usePermission } from '@/hooks/use-permission';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { 
@@ -50,6 +51,7 @@ import {
   ExportReadyState,
   EmptyListState 
 } from '@/components/ui/states';
+import { AccessDeniedState } from '@/components/ui/access-denied-state';
 
 const entityTypes: { id: ExportEntityType; label: string; icon: React.ElementType; description: string }[] = [
   { id: 'project', label: 'Проект', icon: FileCheck, description: 'Карточка отдельного проекта' },
@@ -109,6 +111,7 @@ function getStatusIcon(status: ExportJob['status']) {
 }
 
 export default function ExportPage() {
+  const { can } = usePermission();
   const [selectedEntityType, setSelectedEntityType] = useState<ExportEntityType>('scenario');
   const [selectedEntity, setSelectedEntity] = useState<string>('');
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('pdf');
@@ -154,6 +157,9 @@ export default function ExportPage() {
 
   return (
     <AppShell>
+      {!can('view:export') ? (
+        <AccessDeniedState />
+      ) : (
       <div className="flex h-[calc(100vh-4rem)]">
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
@@ -447,6 +453,7 @@ export default function ExportPage() {
           </div>
         </div>
       </div>
+      )}
     </AppShell>
   );
 }

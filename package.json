@@ -7,7 +7,7 @@
     "dev": "__NEXT_DEVTOOLS_NEW_PANEL_UI=0 next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint .",
     "audit:e2e": "node scripts/audit.mjs",
     "debug:constructor": "node scripts/constructor-debug.mjs",
     "snap:layout": "node scripts/layout-snap.mjs"
@@ -64,10 +64,17 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
     "@tailwindcss/postcss": "^4.2.0",
     "@types/node": "^22",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.58.1",
+    "@typescript-eslint/parser": "^8.58.1",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.3",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "playwright": "^1.59.1",
     "postcss": "^8.5",
     "tailwindcss": "^4.2.0",

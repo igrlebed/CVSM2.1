@@ -464,7 +464,9 @@ function KpiItem({ label, value, unit }: { label: string; value: number; unit: s
 function StatusBadge({ status }: { status: Scenario['status'] }) {
   const config = {
     'published': { icon: CheckCircle, color: 'bg-implementation-green/10 text-implementation-green border-implementation-green/20' },
+    'approved': { icon: CheckCircle, color: 'bg-implementation-green/10 text-implementation-green border-implementation-green/20' },
     'ready-for-review': { icon: Clock, color: 'bg-sm-blue/10 text-sm-blue border-sm-blue/20' },
+    'needs-revision': { icon: AlertTriangle, color: 'bg-destructive/10 text-destructive border-destructive/20' },
     'validation-error': { icon: AlertTriangle, color: 'bg-destructive/10 text-destructive border-destructive/20' },
     'draft': { icon: Clock, color: 'bg-amber-100 text-amber-700 border-amber-200' },
     'archived': { icon: Archive, color: 'bg-muted text-muted-foreground border-border' },

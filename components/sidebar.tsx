@@ -21,7 +21,7 @@ const navigation = [
   { name: "Проекты", href: "/projects", icon: FolderKanban },
   { name: "Карта", href: "/map", icon: Map },
   { name: "Конструктор", href: "/constructor", icon: BarChart3, permission: 'view:constructor' },
-  { name: "Архив", href: "/archive", icon: FileText },
+  { name: "Архив", href: "/archive", icon: FileText, permission: 'view:archive' },
 ]
 
 const bottomNavigation = [
