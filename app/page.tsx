@@ -31,10 +31,11 @@ export default function OverviewPage() {
   return (
     <AppShell>
       {/* Desktop anchored grid: left content + right rail share one viewport height */}
-      <div className="h-[calc(100vh-4rem)] min-h-0 p-6 overflow-hidden">
-        <div className="grid grid-cols-[minmax(0,1fr)_360px] gap-6 h-full min-h-0">
-          {/* Left column */}
-          <div className="flex h-full min-h-0 flex-col pr-1">
+      <div className="flex flex-col h-[calc(100vh-4rem)] min-h-0 overflow-hidden">
+        <div className="p-6 flex-1 min-h-0 flex flex-col">
+          <div className="grid grid-cols-[minmax(0,1fr)_360px] gap-6 h-full min-h-0">
+            {/* Left column */}
+            <div className="flex h-full min-h-0 flex-col pr-1">
             {/* Top: title + KPI */}
             <div className="shrink-0 space-y-6">
               <div>
@@ -143,6 +144,7 @@ export default function OverviewPage() {
               <SignalsBlock />
             </div>
           </div>
+        </div>
         </div>
       </div>
 
