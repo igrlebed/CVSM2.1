@@ -95,7 +95,7 @@ export function NetworkMap({
     <div className={cn('relative w-full h-full bg-secondary/30 rounded-2xl overflow-hidden flex flex-col', className)}>
       <svg 
         viewBox="0 0 800 700" 
-        className="w-full h-full flex-1 min-h-0"
+        className="w-full h-full"
         preserveAspectRatio="xMidYMid meet"
       >
         {/* Background grid */}
