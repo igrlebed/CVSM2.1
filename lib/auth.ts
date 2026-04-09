@@ -35,7 +35,7 @@ export const MOCK_USERS: User[] = [
   },
   {
     id: '4',
-    name: 'Adminов А.А.',
+    name: 'Голубев А.А.',
     role: 'admin',
     avatar: '/placeholder-user.jpg',
   },

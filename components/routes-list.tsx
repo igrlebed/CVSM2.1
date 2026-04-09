@@ -23,32 +23,28 @@ export function RoutesList({ projects, onRouteClick, selectedRouteId, className 
             key={project.id}
             onClick={() => onRouteClick(project)}
             className={cn(
-              'w-full flex items-center justify-between p-3 rounded-xl transition-all text-left',
+              'w-full grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 p-3 rounded-xl transition-all text-left',
               isSelected
                 ? 'bg-primary/5 ring-1 ring-primary/20'
                 : 'bg-secondary/50 hover:bg-secondary'
             )}
           >
-            <div className="flex items-center gap-3 min-w-0">
-              <RouteBadge type={project.type} />
-              <div className="min-w-0">
-                <span className="text-sm font-medium text-foreground block truncate">
-                  {project.name}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {project.length.toLocaleString('ru-RU')} км
+            <RouteBadge type={project.type} />
+            
+            <div className="min-w-0">
+              <span className="text-sm font-semibold text-foreground block truncate mb-0.5">
+                {project.name}
+              </span>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span>{project.length.toLocaleString('ru-RU')} км</span>
+                <span className="flex items-center gap-1">
+                  <TrendingUp className="h-3 w-3 shrink-0" />
+                  <span>~{project.investment.toLocaleString('ru-RU')} млрд</span>
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="text-right">
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <TrendingUp className="h-3 w-3" />
-                  <span>{project.gdpEffect.toLocaleString('ru-RU')} млрд</span>
-                </div>
-              </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            </div>
+
+            <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
           </button>
         );
       })}

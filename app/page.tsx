@@ -46,7 +46,7 @@ export default function OverviewPage() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-6 gap-4">
+            <div className="grid grid-cols-6 gap-3">
               <KPICard
                 label={kpiData.gdpGrowth.label}
                 value={kpiData.gdpGrowth.value}
@@ -88,14 +88,14 @@ export default function OverviewPage() {
             </div>
 
             {/* Map */}
-            <div className="rounded-2xl bg-card p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-foreground">Схема сети</h2>
-                <span className="text-xs text-muted-foreground">
+            <div className="rounded-2xl bg-card p-5 border border-border/40">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-base font-semibold text-foreground">Схема сети</h2>
+                <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded-md">
                   {visibleProjects.length} {visibleProjects.length === 1 ? 'маршрут' : 'маршрутов'} к {selectedYear} году
                 </span>
               </div>
-              <div className="h-[420px]">
+              <div className="h-[340px]">
                 <NetworkMap
                   projects={projects}
                   selectedYear={selectedYear}
@@ -106,14 +106,14 @@ export default function OverviewPage() {
             </div>
 
             {/* Timeline */}
-            <div className="rounded-2xl bg-card p-6">
-              <h3 className="text-sm font-medium text-foreground mb-4">Хронология развития сети</h3>
+            <div className="rounded-2xl bg-card p-5 border border-border/40">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Хронология развития</h3>
               <TimelineSlider value={selectedYear} onChange={setSelectedYear} />
             </div>
 
             {/* Quick Actions */}
-            <div className="rounded-2xl bg-card p-6">
-              <h3 className="text-sm font-medium text-foreground mb-4">Быстрые действия</h3>
+            <div className="rounded-2xl bg-card p-5 border border-border/40">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Быстрые действия</h3>
               <QuickActions />
             </div>
           </div>

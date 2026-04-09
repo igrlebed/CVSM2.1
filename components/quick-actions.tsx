@@ -11,29 +11,29 @@ interface QuickActionsProps {
 
 export function QuickActions({ className }: QuickActionsProps) {
   return (
-    <div className={cn('flex flex-wrap gap-2', className)}>
-      <Button variant="outline" size="sm" asChild>
+    <div className={cn('flex flex-wrap gap-3', className)}>
+      <Button variant="outline" size="sm" asChild className="h-9 px-4 rounded-lg bg-background hover:bg-secondary/50 border-border/60 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
         <Link href="/constructor">
-          <Plus className="h-4 w-4 mr-2" />
-          Новый сценарий
+          <Plus className="h-4 w-4 mr-2 text-primary" />
+          <span>Новый сценарий</span>
         </Link>
       </Button>
-      <Button variant="outline" size="sm" asChild>
+      <Button variant="outline" size="sm" asChild className="h-9 px-4 rounded-lg bg-background hover:bg-secondary/50 border-border/60 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
         <Link href="/projects?mode=compare">
-          <GitCompare className="h-4 w-4 mr-2" />
-          Сравнить проекты
+          <GitCompare className="h-4 w-4 mr-2 text-primary" />
+          <span>Сравнить проекты</span>
         </Link>
       </Button>
-      <Button variant="outline" size="sm" asChild>
+      <Button variant="outline" size="sm" asChild className="h-9 px-4 rounded-lg bg-background hover:bg-secondary/50 border-border/60 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
         <Link href="/constructor?mode=calculator">
-          <Calculator className="h-4 w-4 mr-2" />
-          Калькулятор эффектов
+          <Calculator className="h-4 w-4 mr-2 text-primary" />
+          <span>Калькулятор</span>
         </Link>
       </Button>
-      <Button variant="outline" size="sm" asChild>
+      <Button variant="outline" size="sm" asChild className="h-9 px-4 rounded-lg bg-background hover:bg-secondary/50 border-border/60 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
         <Link href="/export">
-          <FileDown className="h-4 w-4 mr-2" />
-          Экспорт отчёта
+          <FileDown className="h-4 w-4 mr-2 text-primary" />
+          <span>Экспорт отчёта</span>
         </Link>
       </Button>
     </div>
