@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { ProjectsNav, type ProjectsMode } from '@/components/projects/projects-nav';
@@ -15,7 +15,7 @@ import { projects } from '@/lib/data';
 import type { RouteProject } from '@/lib/data';
 import { Search, Download } from 'lucide-react';
 
-export default function ProjectsPage() {
+function ProjectsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<ProjectsMode>('list');
@@ -182,5 +182,13 @@ export default function ProjectsPage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProjectsPageContent />
+    </Suspense>
   );
 }

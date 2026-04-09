@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { TimelineSlider } from '@/components/timeline-slider';
@@ -69,7 +69,7 @@ function getRouteColor(type: ProjectType): string {
   }
 }
 
-export default function MapPage() {
+function MapPageContent() {
   const searchParams = useSearchParams();
   const initialRouteId = searchParams.get('route') || searchParams.get('project');
   const initialCompareIdsRaw =
@@ -576,6 +576,14 @@ export default function MapPage() {
         </div>
       </div>
     </AppShell>
+  );
+}
+
+export default function MapPage() {
+  return (
+    <Suspense fallback={null}>
+      <MapPageContent />
+    </Suspense>
   );
 }
 
