@@ -94,7 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: AUTH_ERRORS.ACCOUNT_DISABLED };
     }
 
-    if (MOCK_PASSWORDS[mockUser.login] !== password) {
+    // Проверка пароля (пустой пароль = тестовый быстрый вход)
+    if (password !== '' && MOCK_PASSWORDS[mockUser.login] !== password) {
       const newAttempts = attempts.attempts + 1;
       if (newAttempts >= MAX_ATTEMPTS) {
         saveAttempts({ attempts: newAttempts, lockedUntil: Date.now() + LOCKOUT_DURATION_MS });

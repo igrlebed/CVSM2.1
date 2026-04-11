@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npx *)",
+      "Bash(git checkout *)",
+      "Bash(git pull *)",
+      "Bash(git tag *)",
+      "Bash(git push *)",
+      "Bash(git add *)",
+      "Bash(git reset *)",
+      "Bash(echo *)",
+      "Bash(git commit *)",
+      "Bash(which *)",
+      "Bash(npm install *)",
+      "Bash(pnpm add *)",
+      "Bash(vercel *)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(mkdir *)",
+      "Bash(python3 *)"
+    ]
+  },
+  "$version": 3
+}
