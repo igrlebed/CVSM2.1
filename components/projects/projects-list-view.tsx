@@ -341,7 +341,7 @@ export function ProjectsListView({
                     <td className="p-3">
                       <span className="text-sm font-medium text-foreground">{project.name}</span>
                       {project.hasMissingData && (
-                        <span className="ml-2 text-xs text-amber-600">неполные данные</span>
+                        <span className="block text-xs text-amber-600 mt-0.5">неполные данные</span>
                       )}
                     </td>
                     <td className="p-3"><RouteBadge type={project.type} /></td>
