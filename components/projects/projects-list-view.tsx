@@ -16,7 +16,7 @@ interface ProjectsListViewProps {
   onToggleProject: (id: string) => void;
   onOpenCard: (project: RouteProject) => void;
   onShowOnMap: (project: RouteProject) => void;
-  onExport: (project: RouteProject) => void;
+  onExport: (project?: RouteProject) => void;
 }
 
 interface FilterState {
@@ -132,7 +132,7 @@ export function ProjectsListView({
   ].filter(Boolean).length;
 
   return (
-    <div className="flex gap-5 h-full">
+    <div className="flex gap-5 h-full relative">
       {/* Filter Rail */}
       {showFilters && (
         <div className="w-[260px] bg-card rounded-2xl p-4 shrink-0 overflow-y-auto">
@@ -280,7 +280,7 @@ export function ProjectsListView({
             <span className="text-sm text-muted-foreground">
               {sortedProjects.length} из {projects.length}
             </span>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => onExport()}>
               <Download className="h-4 w-4 mr-2" />
               Экспорт
             </Button>
@@ -288,8 +288,8 @@ export function ProjectsListView({
         </div>
 
         {/* Table */}
-        <div className="flex-1 bg-card rounded-2xl overflow-hidden flex flex-col">
-          <div className="overflow-x-auto flex-1">
+        <div className="flex-1 bg-card rounded-2xl overflow-hidden flex flex-col min-h-0">
+          <div className="overflow-auto flex-1 min-h-0">
             <table className="w-full min-w-[1200px]">
               <thead className="sticky top-0 z-10 bg-card border-b border-border">
                 <tr>
@@ -381,17 +381,19 @@ export function ProjectsListView({
         </div>
       </div>
 
-      {/* Summary Panel */}
+      {/* Summary Panel — pop-side overlay */}
       {selectedRow && (
-        <ProjectSummaryPanel
-          project={selectedRow}
-          onClose={() => setSelectedRow(null)}
-          onOpenCard={() => onOpenCard(selectedRow)}
-          onAddToCompare={() => onToggleProject(selectedRow.id)}
-          onShowOnMap={() => onShowOnMap(selectedRow)}
-          onExport={() => onExport(selectedRow)}
-          isInCompare={selectedProjectIds.includes(selectedRow.id)}
-        />
+        <div className="absolute right-0 top-0 bottom-0 z-20 pl-4">
+          <ProjectSummaryPanel
+            project={selectedRow}
+            onClose={() => setSelectedRow(null)}
+            onOpenCard={() => onOpenCard(selectedRow)}
+            onAddToCompare={() => onToggleProject(selectedRow.id)}
+            onShowOnMap={() => onShowOnMap(selectedRow)}
+            onExport={() => onExport(selectedRow)}
+            isInCompare={selectedProjectIds.includes(selectedRow.id)}
+          />
+        </div>
       )}
     </div>
   );
