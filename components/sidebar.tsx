@@ -8,7 +8,8 @@ import {
   BarChart3,
   Settings,
   ChevronLeft,
-  Train
+  Train,
+  Layers
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -19,13 +20,9 @@ const navigation = [
   { name: "Обзор", href: "/", icon: LayoutDashboard },
   { name: "Проекты", href: "/projects", icon: FolderKanban },
   { name: "Карта", href: "/map", icon: Map },
-  { name: "Аналитика", href: "/analytics/dashboards", icon: BarChart3 },
-  { name: "Конструктор", href: "/constructor", icon: BarChart3 },
+  { name: "Аналитика", href: "/analytics", icon: BarChart3 },
+  { name: "Конструктор", href: "/constructor", icon: Layers },
   { name: "Администрирование", href: "/admin/users", icon: Settings, permission: 'manage:users' },
-]
-
-const bottomNavigation = [
-  { name: "Настройки", href: "/settings", icon: Settings },
 ]
 
 export function Sidebar() {
@@ -34,7 +31,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
 
   return (
-    <aside 
+    <aside
       className={cn(
         "flex flex-col h-screen bg-card border-r border-border/50 transition-all duration-300",
         collapsed ? "w-[72px]" : "w-[260px]"
@@ -47,7 +44,7 @@ export function Sidebar() {
         </div>
         {!collapsed && (
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-foreground tracking-tight">РЖД Аналитика</span>
+            <span className="text-sm font-semibold text-foreground tracking-tight">Цифровая модель ВСМ</span>
             <span className="text-[11px] text-muted-foreground">Стратегическое планирование</span>
           </div>
         )}
@@ -58,17 +55,17 @@ export function Sidebar() {
         {navigation.map((item) => {
           if (item.permission && !can(item.permission as any)) return null
 
-          const isActive = pathname === item.href || 
+          const isActive = pathname === item.href ||
             (item.href !== "/" && pathname.startsWith(item.href))
-          
+
           return (
             <Link
               key={item.name}
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                isActive 
-                  ? "bg-secondary text-foreground" 
+                isActive
+                  ? "bg-secondary text-foreground"
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               )}
             >
@@ -79,32 +76,11 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Bottom Navigation */}
+      {/* Collapse Button */}
       <div className="py-4 px-3 border-t border-border/50">
-        {bottomNavigation.map((item) => {
-          const isActive = pathname === item.href
-          
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                isActive 
-                  ? "bg-secondary text-foreground" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-              )}
-            >
-              <item.icon className="w-5 h-5 shrink-0" />
-              {!collapsed && <span>{item.name}</span>}
-            </Link>
-          )
-        })}
-        
-        {/* Collapse Button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center gap-3 px-3 py-2.5 mt-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors w-full"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors w-full"
         >
           <ChevronLeft className={cn(
             "w-5 h-5 shrink-0 transition-transform",

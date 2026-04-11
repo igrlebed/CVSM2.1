@@ -1,17 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { KeyRound, AlertTriangle, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { KeyRound, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { MOCK_PASSWORDS } from '@/lib/auth';
 
 export default function FirstLoginPage() {
-  const { user, login, changePassword, logout } = useAuth();
+  const { user, changePassword } = useAuth();
   const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -20,14 +21,17 @@ export default function FirstLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswords, setShowPasswords] = useState(false);
 
-  // Если пользователь не залогинен — редирект на логин
-  if (!user) {
-    router.push('/auth/login');
-    return null;
-  }
+  // Guard: если пользователь не залогинен — редирект через useEffect
+  useEffect(() => {
+    if (!user) {
+      router.replace('/auth/login');
+    }
+  }, [user, router]);
+
+  if (!user) return null;
 
   const validatePassword = (pwd: string): string | null => {
-    if (pwd.length < 8) return '[ERR-AUTH-008] Пароль должен содержать минимум 8 символов';
+    if (pwd.length < 8) return 'ERR-AUTH-008 — Пароль должен содержать минимум 8 символов';
     return null;
   };
 
@@ -35,10 +39,10 @@ export default function FirstLoginPage() {
     e.preventDefault();
     setError(null);
 
-    // Проверка текущего пароля
-    const loginResult = login(user.login, currentPassword);
-    if (!loginResult.success) {
-      setError('[ERR-AUTH-001] Неверный текущий пароль');
+    // Проверка текущего пароля напрямую (не вызываем login — пользователь уже залогинен)
+    const expectedPassword = MOCK_PASSWORDS[user.login];
+    if (currentPassword !== expectedPassword) {
+      setError('ERR-AUTH-001 — Неверный текущий пароль');
       return;
     }
 
@@ -47,7 +51,7 @@ export default function FirstLoginPage() {
     if (pwdError) { setError(pwdError); return; }
 
     if (newPassword !== confirmPassword) {
-      setError('[ERR-AUTH-009] Пароли не совпадают');
+      setError('ERR-AUTH-009 — Пароли не совпадают');
       return;
     }
 
@@ -73,7 +77,14 @@ export default function FirstLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
       <div className="w-full max-w-md">
+        {/* Logo */}
         <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary mb-4">
+            <svg viewBox="0 0 24 24" fill="none" className="h-8 w-8 text-primary-foreground" stroke="currentColor" strokeWidth="2">
+              <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+              <line x1="4" x2="4" y1="22" y2="15" />
+            </svg>
+          </div>
           <h1 className="text-2xl font-bold tracking-tight mb-1">Цифровая модель ВСМ</h1>
           <p className="text-muted-foreground text-sm">Добро пожаловать, {user.name}</p>
         </div>
@@ -99,15 +110,13 @@ export default function FirstLoginPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="current">Текущий пароль</Label>
-                <div className="relative">
-                  <Input
-                    id="current"
-                    type={showPasswords ? 'text' : 'password'}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    required
-                  />
-                </div>
+                <Input
+                  id="current"
+                  type={showPasswords ? 'text' : 'password'}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                />
               </div>
 
               <div className="space-y-2">
@@ -159,6 +168,10 @@ export default function FirstLoginPage() {
             </CardFooter>
           </form>
         </Card>
+
+        <p className="text-center text-xs text-muted-foreground mt-6">
+          Версия системы 0.1.0
+        </p>
       </div>
     </div>
   );

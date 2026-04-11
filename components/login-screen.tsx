@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +14,7 @@ import { AUTH_ERRORS } from '@/lib/auth';
 
 export function LoginScreen() {
   const { login } = useAuth();
+  const router = useRouter();
   const [loginValue, setLoginValue] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<typeof AUTH_ERRORS[keyof typeof AUTH_ERRORS] | null>(null);
@@ -29,7 +32,12 @@ export function LoginScreen() {
     const result = login(loginValue.trim(), password);
 
     if (!result.success && result.error) {
-      setError(result.error);
+      // При блокировке — переходим на отдельный экран
+      if (result.error.code === 'ERR-AUTH-002') {
+        router.push('/auth/locked');
+      } else {
+        setError(result.error);
+      }
     }
 
     setIsLoading(false);
@@ -64,7 +72,7 @@ export function LoginScreen() {
                 <Alert variant={error.code === 'ERR-AUTH-006' ? 'default' : 'destructive'}>
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
-                    <span className="font-mono text-xs">[{error.code}]</span> {error.message}
+                    <span className="font-mono text-xs">{error.code}</span> — {error.message}
                   </AlertDescription>
                 </Alert>
               )}
@@ -110,7 +118,7 @@ export function LoginScreen() {
                 {isLoading ? 'Вход...' : 'Войти'}
               </Button>
               <Button type="button" variant="link" className="text-sm" asChild>
-                <a href="/auth/forgot-password">Забыли пароль?</a>
+                <Link href="/auth/forgot-password">Забыли пароль?</Link>
               </Button>
             </CardFooter>
           </form>
