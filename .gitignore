@@ -9,9 +9,12 @@ next.user-config.*
 
 # Environment variables
 .env*.local
+.env.production
+.env.staging
+!.env.example
 
 # Common ignores
 node_modules
 .next/
 .DS_Store
-tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo.qwen/
