@@ -7,9 +7,11 @@ import { NetworkMap } from '@/components/network-map';
 import { TimelineSlider } from '@/components/timeline-slider';
 import { RoutesList } from '@/components/routes-list';
 import { RouteDrawer } from '@/components/route-drawer';
-import { ComparePresets } from '@/components/compare-presets';
 import { SignalsBlock } from '@/components/signals-block';
-import { QuickActions } from '@/components/quick-actions';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, GitCompare, FileDown } from 'lucide-react';
+import Link from 'next/link';
 import { kpiData, projects, getProjectsByYear, type RouteProject } from '@/lib/data';
 
 export default function OverviewPage() {
@@ -30,75 +32,96 @@ export default function OverviewPage() {
 
   return (
     <AppShell>
-      {/* Desktop anchored grid: left content + right rail share one viewport height */}
       <div className="flex flex-col h-[calc(100vh-4rem)] min-h-0 overflow-hidden">
-        <div className="p-6 flex-1 min-h-0 flex flex-col">
-          <div className="grid grid-cols-[minmax(0,1fr)_360px] gap-6 h-full min-h-0">
-            {/* Left column */}
-            <div className="flex h-full min-h-0 flex-col pr-1">
-            {/* Top: title + KPI */}
-            <div className="shrink-0 space-y-6">
-              <div>
-                <h1 className="text-2xl font-semibold text-foreground mb-1">
-                  Обзор сети ВСМ России
-                </h1>
-                <p className="text-muted-foreground">
-                  Стратегическое планирование высокоскоростных и скоростных железнодорожных магистралей
-                </p>
-              </div>
+        <div className="px-6 py-4 border-b border-border/40 bg-card shrink-0">
+          <h1 className="text-xl font-semibold text-foreground">Обзор сети</h1>
+          <p className="text-sm text-muted-foreground">Стратегическое планирование высокоскоростных и скоростных железнодорожных магистралей</p>
+        </div>
 
-              <div className="grid grid-cols-6 gap-3">
-                <KPICard
-                  label={kpiData.gdpGrowth.label}
-                  value={kpiData.gdpGrowth.value}
-                  unit={kpiData.gdpGrowth.unit}
-                  description={kpiData.gdpGrowth.description}
-                  trend={{ value: 12.4, direction: 'up' }}
-                />
-                <KPICard
-                  label={kpiData.investment.label}
-                  value={kpiData.investment.value}
-                  unit={kpiData.investment.unit}
-                  description={kpiData.investment.description}
-                />
-                <KPICard
-                  label={kpiData.passengerFlow.label}
-                  value={kpiData.passengerFlow.value}
-                  unit={kpiData.passengerFlow.unit}
-                  description={kpiData.passengerFlow.description}
-                  trend={{ value: 8.2, direction: 'up' }}
-                />
-                <KPICard
-                  label={kpiData.population.label}
-                  value={kpiData.population.value}
-                  unit={kpiData.population.unit}
-                  description={kpiData.population.description}
-                />
-                <KPICard
-                  label={kpiData.networkLength.label}
-                  value={kpiData.networkLength.value}
-                  unit={kpiData.networkLength.unit}
-                  description={kpiData.networkLength.description}
-                />
-                <KPICard
-                  label={kpiData.rollingStock.label}
-                  value={kpiData.rollingStock.value}
-                  unit={kpiData.rollingStock.unit}
-                  description={kpiData.rollingStock.description}
-                />
-              </div>
+        <div className="flex-1 min-h-0 overflow-hidden flex">
+          {/* Left: KPI + actions + signals + map + timeline */}
+          <div className="flex-1 min-h-0 flex flex-col overflow-y-auto p-6 space-y-4">
+            {/* KPI Grid — bento */}
+            <div className="grid grid-cols-3 gap-3">
+              <KPICard label={kpiData.gdpGrowth.label} value={kpiData.gdpGrowth.value} unit={kpiData.gdpGrowth.unit} description={kpiData.gdpGrowth.description} trend={{ value: 12.4, direction: 'up' }} />
+              <KPICard label={kpiData.investment.label} value={kpiData.investment.value} unit={kpiData.investment.unit} description={kpiData.investment.description} />
+              <KPICard label={kpiData.passengerFlow.label} value={kpiData.passengerFlow.value} unit={kpiData.passengerFlow.unit} description={kpiData.passengerFlow.description} trend={{ value: 8.2, direction: 'up' }} />
+              <KPICard label={kpiData.population.label} value={kpiData.population.value} unit={kpiData.population.unit} description={kpiData.population.description} />
+              <KPICard label={kpiData.networkLength.label} value={kpiData.networkLength.value} unit={kpiData.networkLength.unit} description={kpiData.networkLength.description} />
+              <KPICard label={kpiData.rollingStock.label} value={kpiData.rollingStock.value} unit={kpiData.rollingStock.unit} description={kpiData.rollingStock.description} />
             </div>
 
-            {/* Middle: flexible map */}
-            <div className="flex-1 min-h-0 pt-6">
-              <div className="rounded-2xl bg-card p-5 border border-border/40 h-full min-h-0 flex flex-col">
-                <div className="flex items-center justify-between mb-3 shrink-0">
-                  <h2 className="text-base font-semibold text-foreground">Схема сети</h2>
+            {/* Quick Actions — horizontal bento row */}
+            <div className="grid grid-cols-3 gap-3">
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <Button asChild variant="ghost" className="w-full justify-start gap-3 h-auto py-3">
+                    <Link href="/constructor">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 shrink-0">
+                        <Plus className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-medium text-foreground">Новый сценарий</p>
+                        <p className="text-xs text-muted-foreground">Создание сценария в конструкторе</p>
+                      </div>
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <Button asChild variant="ghost" className="w-full justify-start gap-3 h-auto py-3">
+                    <Link href="/projects?compare=">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary shrink-0">
+                        <GitCompare className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-medium text-foreground">Сравнить проекты</p>
+                        <p className="text-xs text-muted-foreground">Парное сравнение маршрутов</p>
+                      </div>
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <Button asChild variant="ghost" className="w-full justify-start gap-3 h-auto py-3">
+                    <Link href="/analytics/reports">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary shrink-0">
+                        <FileDown className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-medium text-foreground">Экспорт отчёта</p>
+                        <p className="text-xs text-muted-foreground">Выгрузка в xlsx, docx, pdf</p>
+                      </div>
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Signals */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Сигналы и статусы</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SignalsBlock />
+              </CardContent>
+            </Card>
+
+            {/* Map — full width */}
+            <Card className="flex-1 min-h-0">
+              <CardHeader className="pb-2 shrink-0">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-sm">Схема сети</CardTitle>
                   <span className="text-xs text-muted-foreground bg-secondary/50 px-2 py-0.5 rounded-md">
                     {visibleProjects.length} {visibleProjects.length === 1 ? 'маршрут' : 'маршрутов'} к {selectedYear} году
                   </span>
                 </div>
-                <div className="flex-1 min-h-0">
+              </CardHeader>
+              <CardContent className="flex-1 min-h-0 p-0 pt-0">
+                <div className="h-full min-h-[300px]">
                   <NetworkMap
                     projects={projects}
                     selectedYear={selectedYear}
@@ -106,49 +129,34 @@ export default function OverviewPage() {
                     selectedRouteId={selectedProject?.id}
                   />
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Bottom: timeline + quick actions (bottom-anchored) */}
-            <div className="mt-auto pt-6 space-y-4 shrink-0">
-              <div className="rounded-2xl bg-card p-5 border border-border/40">
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Хронология развития</h3>
-                <TimelineSlider value={selectedYear} onChange={setSelectedYear} />
-              </div>
-
-              <div className="rounded-2xl bg-card p-5 border border-border/40">
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Быстрые действия</h3>
-                <QuickActions />
-              </div>
-            </div>
+            {/* Timeline */}
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Хронология развития</CardTitle>
+              </CardHeader>
+              <CardContent className="overflow-x-auto">
+                <div className="min-w-[600px]">
+                  <TimelineSlider value={selectedYear} onChange={setSelectedYear} />
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Right rail */}
-          <div className="min-h-0 overflow-y-auto space-y-4">
-            <div className="rounded-2xl bg-card p-5">
-              <h3 className="text-sm font-medium text-foreground mb-4">Ключевые маршруты</h3>
-              <RoutesList
-                projects={projects}
-                onRouteClick={handleRouteClick}
-                selectedRouteId={selectedProject?.id}
-              />
-            </div>
-
-            <div className="rounded-2xl bg-card p-5">
-              <h3 className="text-sm font-medium text-foreground mb-4">Быстрое сравнение</h3>
-              <ComparePresets />
-            </div>
-
-            <div className="rounded-2xl bg-card p-5">
-              <h3 className="text-sm font-medium text-foreground mb-4">Сигналы и статусы</h3>
-              <SignalsBlock />
-            </div>
+          {/* Right: project list only */}
+          <div className="w-[360px] shrink-0 border-l border-border/40 bg-card/50 overflow-y-auto p-4 space-y-2">
+            <h3 className="text-sm font-medium text-foreground mb-2">Ключевые маршруты</h3>
+            <RoutesList
+              projects={projects}
+              onRouteClick={handleRouteClick}
+              selectedRouteId={selectedProject?.id}
+            />
           </div>
-        </div>
         </div>
       </div>
 
-      {/* Route Drawer */}
       <RouteDrawer
         project={selectedProject}
         open={drawerOpen}

@@ -414,9 +414,39 @@ function MapPageContent() {
         </div>
 
         {/* Right Panel - Route Details or Compare (anchored to both rows) */}
-        {(selectedRoute || compareRoutes.length > 0) && (
+        {(selectedRoute || compareRoutes.length > 0 || compareMode) && (
           <div className="row-span-2 w-96 bg-card border-l border-border flex flex-col min-h-0">
-            {compareMode && compareRoutes.length > 0 ? (
+            {compareMode && compareRoutes.length === 0 ? (
+              // Compare mode active, no routes selected yet — show instructions
+              <>
+                <div className="p-4 border-b border-border flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Режим сравнения
+                  </h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setCompareMode(false)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center mb-4">
+                    <GitCompare className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-base font-semibold text-foreground mb-2">Добавьте проекты к сравнению</h3>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Кликните по линии маршрута на карте, чтобы добавить его к сравнению. Можно выбрать до 4 проектов.
+                  </p>
+                  <div className="bg-secondary/50 rounded-xl p-4 w-full">
+                    <p className="text-xs text-muted-foreground">Подсказка</p>
+                    <p className="text-sm text-foreground mt-1">Наведите на маршрут, чтобы увидеть его название и значение аналитического слоя</p>
+                  </div>
+                </div>
+              </>
+            ) : compareMode && compareRoutes.length > 0 ? (
               // Compare Mode Panel
               <>
                 <div className="p-4 border-b border-border flex items-center justify-between">
@@ -567,7 +597,7 @@ function MapPageContent() {
             (selectedRoute || compareRoutes.length > 0) ? 'col-span-2' : 'col-span-1'
           )}
         >
-          <div className="max-w-3xl mx-auto">
+          <div className="w-full">
             <TimelineSlider
               value={selectedYear}
               onChange={setSelectedYear}

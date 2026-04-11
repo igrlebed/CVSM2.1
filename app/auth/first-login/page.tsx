@@ -9,12 +9,10 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { KeyRound, AlertTriangle, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
-import { MOCK_PASSWORDS } from '@/lib/auth';
 
 export default function FirstLoginPage() {
   const { user, changePassword } = useAuth();
   const router = useRouter();
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -38,13 +36,6 @@ export default function FirstLoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    // Проверка текущего пароля напрямую (не вызываем login — пользователь уже залогинен)
-    const expectedPassword = MOCK_PASSWORDS[user.login];
-    if (currentPassword !== expectedPassword) {
-      setError('ERR-AUTH-001 — Неверный текущий пароль');
-      return;
-    }
 
     // Валидация нового пароля
     const pwdError = validatePassword(newPassword);
@@ -93,10 +84,10 @@ export default function FirstLoginPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <KeyRound className="h-5 w-5 text-amber-500" />
-              Смена временного пароля
+              Установка постоянного пароля
             </CardTitle>
             <CardDescription>
-              При первом входе необходимо установить новый постоянный пароль
+              При первом входе необходимо установить постоянный пароль для учётной записи
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
@@ -109,21 +100,11 @@ export default function FirstLoginPage() {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="current">Текущий пароль</Label>
-                <Input
-                  id="current"
-                  type={showPasswords ? 'text' : 'password'}
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="new">Новый пароль</Label>
                 <Input
                   id="new"
                   type={showPasswords ? 'text' : 'password'}
+                  placeholder="Минимум 8 символов"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   required
@@ -138,6 +119,7 @@ export default function FirstLoginPage() {
                 <Input
                   id="confirm"
                   type={showPasswords ? 'text' : 'password'}
+                  placeholder="Повторите пароль"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
@@ -151,19 +133,13 @@ export default function FirstLoginPage() {
                   onClick={() => setShowPasswords(!showPasswords)}
                 >
                   {showPasswords ? <EyeOff className="h-3.5 w-3.5 inline mr-1" /> : <Eye className="h-3.5 w-3.5 inline mr-1" />}
-                  {showPasswords ? 'Скрыть' : 'Показать'} пароли
+                  {showPasswords ? 'Скрыть' : 'Показать'} пароль
                 </button>
-              </div>
-
-              <div className="bg-muted/50 rounded-lg p-3 text-xs text-muted-foreground space-y-1">
-                <p className="font-medium text-foreground">Требования к паролю:</p>
-                <p>• Минимум 8 символов</p>
-                <p>• Должен отличаться от временного пароля</p>
               </div>
             </CardContent>
             <CardFooter>
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Сохранение...' : 'Установить новый пароль'}
+                {isLoading ? 'Сохранение...' : 'Установить пароль'}
               </Button>
             </CardFooter>
           </form>

@@ -24,7 +24,7 @@ export const MOCK_USERS: User[] = [
   {
     id: '1',
     login: 'ivanov',
-    name: 'Иванов Иван Иванович',
+    name: 'Иванов И.И.',
     department: 'Центр организации скоростного и высокоскоростного сообщения',
     position: 'Ведущий аналитик',
     email: 'ivanov@rzd.ru',
@@ -36,7 +36,7 @@ export const MOCK_USERS: User[] = [
   {
     id: '2',
     login: 'admin',
-    name: 'Голубев Андрей Александрович',
+    name: 'Голубев А.А.',
     department: 'Департамент управления информационной безопасностью',
     position: 'Начальник отдела',
     email: 'golubev@rzd.ru',
@@ -48,14 +48,14 @@ export const MOCK_USERS: User[] = [
   {
     id: '3',
     login: 'petrova',
-    name: 'Петрова Анна Сергеевна',
+    name: 'Петрова А.С.',
     department: 'Центр организации скоростного и высокоскоростного сообщения',
     position: 'Аналитик',
     email: 'petrova@rzd.ru',
     roles: ['expert'],
     roleExpiryDate: '2026-06-30',
     isActive: true,
-    isTemporaryPassword: true, // первый вход
+    isTemporaryPassword: true,
   },
   {
     id: '4',
@@ -65,8 +65,8 @@ export const MOCK_USERS: User[] = [
     position: 'Инженер',
     email: 'sidorov@rzd.ru',
     roles: ['expert'],
-    roleExpiryDate: '2026-01-01', // истекла
-    isActive: false, // заблокирован
+    roleExpiryDate: '2026-01-01',
+    isActive: false,
     isTemporaryPassword: false,
   },
 ];

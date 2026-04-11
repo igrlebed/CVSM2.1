@@ -236,12 +236,6 @@ function ScenarioCard({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {onAddToCompare && (
-              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onAddToCompare(); }}>
-                <GitCompare className="mr-2 h-4 w-4" />
-                {isInCompare ? 'Убрать из сравнения' : 'Добавить к сравнению'}
-              </DropdownMenuItem>
-            )}
             {onArchive && (
               <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onArchive(); }}>
                 <Archive className="mr-2 h-4 w-4" />

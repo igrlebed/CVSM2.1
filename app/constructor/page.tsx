@@ -198,7 +198,7 @@ export default function ConstructorPage() {
       <div className="flex h-[calc(100vh-4rem)] relative">
         {/* Left sidebar - Scenario list */}
         {(mode === 'list' || mode === 'edit' || mode === 'history') && (
-          <div className="w-72 border-r border-border bg-card flex-shrink-0">
+          <div className="w-96 border-r border-border bg-card flex-shrink-0">
             <ScenarioList
               scenarios={scenarios}
               selectedId={selectedScenario?.id}

@@ -195,7 +195,7 @@ export function ScenarioEditor({
               <div className="mt-2 bg-card border rounded-xl overflow-hidden">
                 <div className="max-h-[400px] overflow-y-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-secondary/50 sticky top-0">
+                    <thead className="bg-card border-b border-border sticky top-0 z-10">
                       <tr>
                         <th className="px-4 py-2 text-left font-medium text-muted-foreground">Включён</th>
                         <th className="px-4 py-2 text-left font-medium text-muted-foreground">Проект</th>
@@ -255,7 +255,7 @@ export function ScenarioEditor({
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Горизонт планирования</label>
                     <Select defaultValue="2050" disabled={!isEditMode}>
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-9 w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -268,12 +268,12 @@ export function ScenarioEditor({
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Ставка дисконтирования</label>
-                    <Input defaultValue="6%" disabled={!isEditMode} className="h-9" />
+                    <Input defaultValue="6%" disabled={!isEditMode} className="h-9 w-full" />
                   </div>
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Сценарий макроэкономики</label>
                     <Select defaultValue="base" disabled={!isEditMode}>
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-9 w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -286,7 +286,7 @@ export function ScenarioEditor({
                   <div>
                     <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Прогноз пассажиропотока</label>
                     <Select defaultValue="moderate" disabled={!isEditMode}>
-                      <SelectTrigger className="h-9">
+                      <SelectTrigger className="h-9 w-full">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
