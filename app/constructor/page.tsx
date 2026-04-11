@@ -28,7 +28,7 @@ import { AccessDeniedState } from '@/components/ui/access-denied-state';
 type ConstructorMode = 'list' | 'edit' | 'compare' | 'new-route' | 'route-uploaded' | 'history';
 
 export default function ConstructorPage() {
-  const { can, role } = usePermission();
+  const { can, hasRole } = usePermission();
   
   // Guard: basic access to constructor
   const canViewConstructor = can('view:constructor');
@@ -172,12 +172,12 @@ export default function ConstructorPage() {
     if (selectedScenario.isBase) return 'readonly';
 
     // Approver: never full edit. Only review when scenario is ready, otherwise readonly.
-    if (role === 'approver') {
+    if (hasRole('approver' as any)) {
       return selectedScenario.status === 'ready-for-review' ? 'review' : 'readonly';
     }
 
     // Admin: full access (except base).
-    if (role === 'admin') return 'edit';
+    if (hasRole('admin')) return 'edit';
 
     // Analyst: edit when allowed.
     if (canEditScenario) return 'edit';

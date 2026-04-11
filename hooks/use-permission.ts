@@ -1,58 +1,64 @@
 import { useAuth } from '@/contexts/auth-context';
+import { Role } from '@/lib/auth';
 
-export type Action = 
+export type Action =
   | 'view:dashboard'
   | 'view:map'
   | 'view:projects'
+  | 'view:analytics'
+  | 'view:constructor'
   | 'view:archive'
   | 'view:export'
-  | 'view:constructor'
-  | 'view:scenario'
-  | 'edit:scenario'
+  | 'edit:data'
+  | 'manage:users'
+  | 'view:admin'
   | 'create:scenario'
-  | 'import:data'
-  | 'compare:scenario'
-  | 'review:scenario'
+  | 'edit:scenario'
   | 'approve:scenario'
-  | 'manage:users';
+  | 'compare:scenario';
 
 export function usePermission() {
   const { user } = useAuth();
 
+  const hasRole = (role: Role): boolean => {
+    if (!user) return false;
+    return user.roles.includes(role);
+  };
+
   const can = (action: Action): boolean => {
     if (!user) return false;
+    if (!user.isActive) return false;
+
+    const isAdmin = hasRole('admin');
+    const isExpert = hasRole('expert');
 
     switch (action) {
       case 'view:dashboard':
       case 'view:map':
       case 'view:projects':
-        return ['operator', 'analyst', 'approver', 'admin'].includes(user.role);
-
+      case 'view:analytics':
+      case 'view:constructor':
       case 'view:archive':
       case 'view:export':
-        return ['analyst', 'approver', 'admin'].includes(user.role);
-      
-      case 'view:constructor':
-      case 'view:scenario':
-      case 'compare:scenario':
-        return ['analyst', 'approver', 'admin'].includes(user.role);
+      case 'edit:data':
+        return isExpert || isAdmin;
+
+      case 'view:admin':
+      case 'manage:users':
+        return isAdmin;
 
       case 'create:scenario':
       case 'edit:scenario':
-      case 'import:data':
-        return ['analyst', 'admin'].includes(user.role);
-      
-      case 'review:scenario':
+      case 'compare:scenario':
+        return isExpert || isAdmin;
+
       case 'approve:scenario':
-        return ['approver', 'admin'].includes(user.role);
-      
-      case 'manage:users':
-        return user.role === 'admin';
-      
+        return isAdmin;
+
       default:
         return false;
     }
   };
 
-  return { can, role: user?.role };
+  return { can, hasRole, roles: user?.roles ?? [] };
 }

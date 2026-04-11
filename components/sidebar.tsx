@@ -1,12 +1,11 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { 
-  LayoutDashboard, 
-  FolderKanban, 
-  Map, 
-  BarChart3, 
-  FileText, 
+import {
+  LayoutDashboard,
+  FolderKanban,
+  Map,
+  BarChart3,
   Settings,
   ChevronLeft,
   Train
@@ -20,8 +19,9 @@ const navigation = [
   { name: "Обзор", href: "/", icon: LayoutDashboard },
   { name: "Проекты", href: "/projects", icon: FolderKanban },
   { name: "Карта", href: "/map", icon: Map },
-  { name: "Конструктор", href: "/constructor", icon: BarChart3, permission: 'view:constructor' },
-  { name: "Архив", href: "/archive", icon: FileText, permission: 'view:archive' },
+  { name: "Аналитика", href: "/analytics/dashboards", icon: BarChart3 },
+  { name: "Конструктор", href: "/constructor", icon: BarChart3 },
+  { name: "Администрирование", href: "/admin/users", icon: Settings, permission: 'manage:users' },
 ]
 
 const bottomNavigation = [

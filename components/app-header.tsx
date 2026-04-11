@@ -22,9 +22,9 @@ const navigation = [
   { name: 'Обзор сети', href: '/', permission: 'view:dashboard' },
   { name: 'Карта сети', href: '/map', permission: 'view:map' },
   { name: 'Проекты', href: '/projects', permission: 'view:projects' },
+  { name: 'Аналитика', href: '/analytics/dashboards', permission: 'view:analytics' },
   { name: 'Конструктор', href: '/constructor', permission: 'view:constructor' },
-  { name: 'Архив', href: '/archive', permission: 'view:archive' },
-  { name: 'Экспорт', href: '/export', permission: 'view:export' },
+  { name: 'Администрирование', href: '/admin/users', permission: 'manage:users' },
 ];
 
 export function AppHeader() {
@@ -115,7 +115,7 @@ export function AppHeader() {
                 <div className="flex flex-col items-start text-left hidden md:flex">
                   <span className="text-sm font-medium leading-none">{user?.name}</span>
                   <Badge variant="secondary" className="mt-1 text-[10px] h-4 px-1 uppercase">
-                    {user ? ROLE_LABELS[user.role] : ''}
+                    {user && user.roles.length > 0 ? user.roles.map(r => ROLE_LABELS[r]).join(', ') : ''}
                   </Badge>
                 </div>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -125,7 +125,7 @@ export function AppHeader() {
               <div className="flex items-center justify-start gap-2 p-2">
                 <div className="flex flex-col space-y-0.5">
                   <p className="text-sm font-medium">{user?.name}</p>
-                  <p className="text-xs text-muted-foreground">{user ? ROLE_LABELS[user.role] : ''}</p>
+                  <p className="text-xs text-muted-foreground">{user && user.roles.length > 0 ? user.roles.map(r => ROLE_LABELS[r]).join(', ') : ''}</p>
                 </div>
               </div>
               <div className="h-px bg-border my-1" />

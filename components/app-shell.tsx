@@ -3,11 +3,7 @@
 import { useState, createContext, useContext, ReactNode } from 'react';
 import { AppHeader } from './app-header';
 
-type Role = 'lpr' | 'analyst';
-
 interface AppContextValue {
-  role: Role;
-  setRole: (role: Role) => void;
   selectedYear: number;
   setSelectedYear: (year: number) => void;
 }
