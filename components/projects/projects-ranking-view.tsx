@@ -144,8 +144,8 @@ export function ProjectsRankingView({ onOpenCard, onExport }: ProjectsRankingVie
   return (
     <div className="flex gap-5 h-full">
       {/* Left criteria configuration panel */}
-      <div className="w-[320px] bg-card rounded-2xl p-4 shrink-0 overflow-y-auto">
-        <div className="flex items-center justify-between mb-4">
+      <div className="w-[640px] bg-card rounded-2xl p-4 shrink-0 flex flex-col min-h-0 overflow-y-auto">
+        <div className="flex items-center justify-between mb-4 shrink-0">
           <h3 className="text-sm font-semibold text-foreground">Критерии ранжирования</h3>
           <Button variant="ghost" size="sm" onClick={resetToDefaults}>
             <RotateCcw className="h-3.5 w-3.5 mr-1" />
@@ -237,10 +237,6 @@ export function ProjectsRankingView({ onOpenCard, onExport }: ProjectsRankingVie
               Активных групп: {enabledGroupsCount} из {rankingGroups.length}
             </span>
           </div>
-          <Button variant="outline" size="sm" onClick={onExport}>
-            <Download className="h-4 w-4 mr-2" />
-            Экспорт
-          </Button>
         </div>
 
         {/* Results */}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, Download, ChevronDown, LogOut } from 'lucide-react';
+import { Search, Download, ChevronDown, LogOut, Settings, Users, FileText, ShieldCheck, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -19,12 +19,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 
 const navigation = [
-  { name: 'Обзор сети', href: '/', permission: 'view:dashboard' },
-  { name: 'Карта сети', href: '/map', permission: 'view:map' },
+  { name: 'Обзор', href: '/', permission: 'view:dashboard' },
+  { name: 'Карта', href: '/map', permission: 'view:map' },
   { name: 'Проекты', href: '/projects', permission: 'view:projects' },
-  { name: 'Аналитика', href: '/analytics/dashboards', permission: 'view:analytics' },
   { name: 'Конструктор', href: '/constructor', permission: 'view:constructor' },
-  { name: 'Администрирование', href: '/admin/users', permission: 'manage:users' },
 ];
 
 export function AppHeader() {
@@ -121,7 +119,7 @@ export function AppHeader() {
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-64">
               <div className="flex items-center justify-start gap-2 p-2">
                 <div className="flex flex-col space-y-0.5">
                   <p className="text-sm font-medium">{user?.name}</p>
@@ -129,6 +127,45 @@ export function AppHeader() {
                 </div>
               </div>
               <div className="h-px bg-border my-1" />
+              <DropdownMenuItem asChild>
+                <Link href="/profile" className="cursor-pointer">
+                  <UserCircle className="mr-2 h-4 w-4" />
+                  <span>Личный кабинет</span>
+                </Link>
+              </DropdownMenuItem>
+              
+              {/* Admin section (only for admin role) */}
+              {can('manage:users') && (
+                <>
+                  <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">Администрирование</div>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/users" className="cursor-pointer">
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Пользователи</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/roles" className="cursor-pointer">
+                      <ShieldCheck className="mr-2 h-4 w-4" />
+                      <span>Роли и права</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/journal" className="cursor-pointer">
+                      <FileText className="mr-2 h-4 w-4" />
+                      <span>Журнал событий</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/audit" className="cursor-pointer">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Аудит</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <div className="h-px bg-border my-1" />
+                </>
+              )}
+              
               <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Выйти</span>

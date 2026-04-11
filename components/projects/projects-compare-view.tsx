@@ -7,6 +7,13 @@ import { projects as allProjects, comparisonMetricGroups, getProjectTypeLabel, g
 import type { RouteProject } from '@/lib/data';
 import { Plus, X, Map, Download, ChevronDown, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 interface ProjectsCompareViewProps {
   selectedProjectIds: string[];
@@ -64,15 +71,15 @@ export function ProjectsCompareView({
           Добавить проекты
         </Button>
 
-        {/* Project selector */}
-        {showProjectSelector && (
-          <div className="mt-6 bg-card rounded-2xl border border-border p-4 w-full max-w-lg">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-foreground">Выберите проекты</h4>
-              <button onClick={() => setShowProjectSelector(false)} className="p-1 rounded hover:bg-secondary">
-                <X className="h-4 w-4 text-muted-foreground" />
-              </button>
-            </div>
+        {/* Project selector modal */}
+        <Dialog open={showProjectSelector} onOpenChange={setShowProjectSelector}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Добавление проектов к сравнению</DialogTitle>
+              <DialogDescription>
+                Выберите проекты из списка для добавления к сравнению
+              </DialogDescription>
+            </DialogHeader>
             <div className="space-y-1 max-h-[300px] overflow-y-auto">
               {availableProjects.map(project => (
                 <button
@@ -82,11 +89,14 @@ export function ProjectsCompareView({
                 >
                   <RouteBadge type={project.type} />
                   <span className="text-sm text-foreground">{project.name}</span>
+                  {selectedProjectIds.includes(project.id) && (
+                    <span className="ml-auto text-xs text-emerald-500 font-medium">Добавлен</span>
+                  )}
                 </button>
               ))}
             </div>
-          </div>
-        )}
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
@@ -162,11 +172,6 @@ export function ProjectsCompareView({
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           <RouteBadge type={project.type} size="sm" />
-                          {project.isInternational && (
-                            <span className="text-[10px] px-1.5 py-0.5 bg-international-yellow-bg text-international-yellow rounded-full">
-                              Междунар.
-                            </span>
-                          )}
                         </div>
                         <h4 className="text-sm font-semibold text-foreground">{project.name}</h4>
                         <p className="text-xs text-muted-foreground mt-0.5">
