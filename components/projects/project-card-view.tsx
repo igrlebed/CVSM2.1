@@ -167,9 +167,9 @@ export function ProjectCardView({
               <GitCompareArrows className="h-4 w-4 mr-2" />
               {isInCompare ? 'В сравнении' : 'К сравнению'}
             </Button>
-            <Button variant="outline" size="sm" className="w-full justify-start" onClick={onOpenInConstructor}>
-              <Pencil className="h-4 w-4 mr-2" />
-              Открыть в конструкторе
+            <Button variant="outline" size="sm" className="w-full justify-start whitespace-normal h-auto py-2 text-left" onClick={onOpenInConstructor}>
+              <Pencil className="h-4 w-4 mr-2 shrink-0" />
+              <span className="leading-tight">Открыть в конструкторе</span>
             </Button>
             <Button variant="outline" size="sm" className="w-full justify-start" onClick={onExport}>
               <Download className="h-4 w-4 mr-2" />
