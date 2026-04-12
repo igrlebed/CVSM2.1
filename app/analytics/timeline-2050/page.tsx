@@ -1,6 +1,7 @@
 'use client';
 
 import { AppShell } from '@/components/app-shell';
+import { PageHeader } from '@/components/page-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { projects } from '@/lib/data';
@@ -11,10 +12,11 @@ export default function Timeline2050Page() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <h1 className="text-xl font-semibold text-foreground">Проекты до 2050 года</h1>
-          <p className="text-sm text-muted-foreground">Перечень и сроки реализации проектов организации скоростного и высокоскоростного движения</p>
-        </div>
+        <PageHeader
+          title="Проекты до 2050 года"
+          description="Перечень и сроки реализации проектов организации скоростного и высокоскоростного движения"
+          breadcrumbs={[{ label: 'Аналитика', href: '/analytics' }, { label: 'Проекты до 2050' }]}
+        />
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-3">
             {activeProjects

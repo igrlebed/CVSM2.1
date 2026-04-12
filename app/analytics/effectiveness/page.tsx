@@ -1,6 +1,7 @@
 'use client';
 
 import { AppShell } from '@/components/app-shell';
+import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, Download } from 'lucide-react';
@@ -15,15 +16,12 @@ export default function EffectivenessPage() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Экономическая эффективность</h1>
-              <p className="text-sm text-muted-foreground">Параметры оценки экономической и социально-экономической эффективности</p>
-            </div>
-            <Button variant="outline" size="sm" className="gap-2"><Download className="h-4 w-4" /> Экспорт</Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Экономическая эффективность"
+          description="Параметры оценки экономической и социально-экономической эффективности"
+          breadcrumbs={[{ label: 'Аналитика', href: '/analytics' }, { label: 'Эффективность' }]}
+          actions={<Button variant="outline" size="sm" className="gap-2"><Download className="h-4 w-4" /> Экспорт</Button>}
+        />
         <div className="flex-1 overflow-y-auto p-6 space-y-3">
           {MOCK_EFFECTIVENESS.map((item, i) => (
             <Card key={i}>

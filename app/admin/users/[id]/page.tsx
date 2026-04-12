@@ -10,6 +10,8 @@ import { MOCK_USERS, ROLE_LABELS, User } from '@/lib/auth';
 import { usePermission } from '@/hooks/use-permission';
 import { AccessDeniedState } from '@/components/ui/access-denied-state';
 import { ArrowLeft, Ban, CheckCircle, Shield, Mail, Building, UserCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import { PageHeader } from '@/components/page-header';
 
 const SYSTEM_VERSION = '0.1.0';
 
@@ -45,18 +47,20 @@ export default function UserCardPage({ params }: { params: Promise<{ id: string 
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <div className="flex items-center gap-3">
+        <PageHeader
+          title="Карточка пользователя"
+          description={user.name}
+          breadcrumbs={[
+            { label: 'Администрирование', href: '/admin/users' },
+            { label: 'Пользователи', href: '/admin/users' },
+            { label: user.name },
+          ]}
+          actions={
             <Button variant="ghost" size="icon" onClick={() => router.push('/admin/users')}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Карточка пользователя</h1>
-              <p className="text-sm text-muted-foreground">{user.name}</p>
-            </div>
-          </div>
-        </div>
+          }
+        />
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
@@ -136,9 +140,21 @@ export default function UserCardPage({ params }: { params: Promise<{ id: string 
                 Редактировать
               </Button>
               {user.isActive ? (
-                <Button variant="destructive"><Ban className="h-4 w-4 mr-2" />Заблокировать</Button>
+                <Button variant="destructive" onClick={() => {
+                  const idx = MOCK_USERS.findIndex(u => u.id === user.id);
+                  if (idx >= 0) {
+                    MOCK_USERS[idx] = { ...MOCK_USERS[idx], isActive: false };
+                  }
+                  toast.error(`Пользователь «${user.name}» заблокирован`);
+                }}><Ban className="h-4 w-4 mr-2" />Заблокировать</Button>
               ) : (
-                <Button className="bg-emerald-500 hover:bg-emerald-500/90"><CheckCircle className="h-4 w-4 mr-2" />Разблокировать</Button>
+                <Button className="bg-emerald-500 hover:bg-emerald-500/90" onClick={() => {
+                  const idx = MOCK_USERS.findIndex(u => u.id === user.id);
+                  if (idx >= 0) {
+                    MOCK_USERS[idx] = { ...MOCK_USERS[idx], isActive: true };
+                  }
+                  toast.success(`Пользователь «${user.name}» разблокирован`);
+                }}><CheckCircle className="h-4 w-4 mr-2" />Разблокировать</Button>
               )}
             </div>
           </div>

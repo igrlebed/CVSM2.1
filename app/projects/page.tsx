@@ -60,7 +60,7 @@ function ProjectsPageContent() {
   }, [router, selectedProjectIds]);
 
   const handleExport = useCallback((project?: RouteProject) => {
-    router.push('/export');
+    router.push('/analytics/reports');
   }, [router]);
 
   const handleOpenInConstructor = useCallback(() => {

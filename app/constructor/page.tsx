@@ -171,15 +171,10 @@ export default function ConstructorPage() {
     if (!selectedScenario) return 'readonly';
     if (selectedScenario.isBase) return 'readonly';
 
-    // Approver: never full edit. Only review when scenario is ready, otherwise readonly.
-    if (hasRole('approver' as any)) {
-      return selectedScenario.status === 'ready-for-review' ? 'review' : 'readonly';
-    }
-
     // Admin: full access (except base).
     if (hasRole('admin')) return 'edit';
 
-    // Analyst: edit when allowed.
+    // Expert: edit when allowed.
     if (canEditScenario) return 'edit';
 
     return 'readonly';

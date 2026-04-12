@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { AppShell } from '@/components/app-shell';
+import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Download, FileText, Clock, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const MOCK_REPORTS = [
   { id: '1', name: 'Сводный отчёт по сети', format: 'xlsx', status: 'ready', date: '2026-04-10 14:30', size: '2.4 МБ' },
@@ -34,10 +36,11 @@ export default function ReportsPage() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <h1 className="text-xl font-semibold text-foreground">Отчёты и выгрузки</h1>
-          <p className="text-sm text-muted-foreground">Формирование и выгрузка отчётов в xlsx, docx, pdf</p>
-        </div>
+        <PageHeader
+          title="Отчёты и выгрузки"
+          description="Формирование и выгрузка отчётов в xlsx, docx, pdf"
+          breadcrumbs={[{ label: 'Аналитика', href: '/analytics' }, { label: 'Отчёты и выгрузки' }]}
+        />
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Create report */}
           <Card>
@@ -68,7 +71,9 @@ export default function ReportsPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <Button className="gap-2"><Download className="h-4 w-4" /> Сформировать</Button>
+                <Button className="gap-2" onClick={() => {
+                  toast.info('Формирование отчёта начато', { description: 'Результат появится в таблице после готовности' });
+                }}><Download className="h-4 w-4" /> Сформировать</Button>
               </div>
             </CardContent>
           </Card>
@@ -98,7 +103,9 @@ export default function ReportsPage() {
                       <TableCell className="text-xs text-muted-foreground">{r.size}</TableCell>
                       <TableCell>
                         {r.status === 'ready' && (
-                          <Button variant="ghost" size="sm" className="h-7 gap-1">
+                          <Button variant="ghost" size="sm" className="h-7 gap-1" onClick={() => {
+                            toast.success(`Скачивание: ${r.name}`);
+                          }}>
                             <Download className="h-3.5 w-3.5" /> Скачать
                           </Button>
                         )}

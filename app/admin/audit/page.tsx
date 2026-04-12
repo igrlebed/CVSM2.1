@@ -13,6 +13,7 @@ import {
 import { usePermission } from '@/hooks/use-permission';
 import { AccessDeniedState } from '@/components/ui/access-denied-state';
 import { Search, Download } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
 
 const SYSTEM_VERSION = '0.1.0';
 
@@ -44,18 +45,20 @@ export default function AdminAuditPage() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Аудит пользователей</h1>
-              <p className="text-sm text-muted-foreground">Попытки входа/выхода, транзакции данных, действия администратора</p>
-            </div>
+        <PageHeader
+          title="Аудит пользователей"
+          description="Попытки входа/выхода, транзакции данных, действия администратора"
+          breadcrumbs={[
+            { label: 'Администрирование', href: '/admin/users' },
+            { label: 'Аудит пользователей' },
+          ]}
+          actions={
             <Button variant="outline" size="sm" className="gap-2">
               <Download className="h-4 w-4" />
               Экспорт .xlsx
             </Button>
-          </div>
-        </div>
+          }
+        />
 
         <div className="flex-1 overflow-y-auto p-6">
           <div className="flex items-center gap-3 mb-4">

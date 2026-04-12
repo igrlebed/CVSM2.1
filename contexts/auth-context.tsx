@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, MOCK_USERS, MOCK_PASSWORDS, LoginAttemptState, AUTH_ERRORS } from '@/lib/auth';
+import { toast } from 'sonner';
 
 interface AuthContextType {
   user: User | null;
@@ -68,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Проверка блокировки по времени
     if (attempts.lockedUntil && Date.now() < attempts.lockedUntil) {
+      toast.error('Учётная запись заблокирована. Попробуйте позже.', { description: AUTH_ERRORS.ACCOUNT_LOCKED.description });
       return {
         success: false,
         error: AUTH_ERRORS.ACCOUNT_LOCKED,
@@ -80,8 +82,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const newAttempts = attempts.attempts + 1;
       if (newAttempts >= MAX_ATTEMPTS) {
         saveAttempts({ attempts: newAttempts, lockedUntil: Date.now() + LOCKOUT_DURATION_MS });
+        toast.error('Учётная запись заблокирована', { description: 'Превышено количество неверных попыток входа (5)' });
         return { success: false, error: AUTH_ERRORS.ACCOUNT_LOCKED };
       }
+      const remaining = MAX_ATTEMPTS - newAttempts;
+      toast.warning(`Неверный логин. Осталось попыток: ${remaining}`);
       saveAttempts({ attempts: newAttempts, lockedUntil: null });
       return { success: false, error: AUTH_ERRORS.INVALID_CREDENTIALS };
     }
@@ -99,8 +104,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const newAttempts = attempts.attempts + 1;
       if (newAttempts >= MAX_ATTEMPTS) {
         saveAttempts({ attempts: newAttempts, lockedUntil: Date.now() + LOCKOUT_DURATION_MS });
+        toast.error('Учётная запись заблокирована', { description: 'Превышено количества неверных попыток входа (5)' });
         return { success: false, error: AUTH_ERRORS.ACCOUNT_LOCKED };
       }
+      const remaining = MAX_ATTEMPTS - newAttempts;
+      toast.warning(`Неверный пароль. Осталось попыток: ${remaining}`);
       saveAttempts({ attempts: newAttempts, lockedUntil: null });
       return { success: false, error: AUTH_ERRORS.INVALID_CREDENTIALS };
     }
@@ -109,6 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     clearAttempts();
     setUser(mockUser);
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(mockUser));
+    toast.success(`Добро пожаловать, ${mockUser.name}!`);
 
     return { success: true };
   };

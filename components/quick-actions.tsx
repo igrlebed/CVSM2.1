@@ -39,7 +39,7 @@ export function QuickActions({ className }: QuickActionsProps) {
       )}
       {can('view:export') && (
         <Button variant="outline" size="sm" asChild className="h-9 px-4 rounded-lg bg-background hover:bg-secondary/50 border-border/60 shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]">
-          <Link href="/export">
+          <Link href="/analytics/reports">
             <FileDown className="h-4 w-4 mr-2 text-primary" />
             <span>Экспорт отчёта</span>
           </Link>

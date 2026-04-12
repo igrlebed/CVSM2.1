@@ -18,7 +18,14 @@
       "Bash(ls *)",
       "Bash(cat *)",
       "Bash(mkdir *)",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(do)",
+      "Bash(then)",
+      "Bash(sed *)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(find *)",
+      "Bash(rm *)"
     ]
   },
   "$version": 3

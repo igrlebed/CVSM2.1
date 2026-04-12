@@ -1,6 +1,7 @@
 'use client';
 
 import { AppShell } from '@/components/app-shell';
+import { PageHeader } from '@/components/page-header';
 import { ProjectsRankingView } from '@/components/projects/projects-ranking-view';
 import { projects } from '@/lib/data';
 
@@ -8,10 +9,11 @@ export default function RankingPage() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <h1 className="text-xl font-semibold text-foreground">Панели показателей</h1>
-          <p className="text-sm text-muted-foreground">Ранжирование проектов: показатели, веса, правила предпочтения, пороговые отсечки</p>
-        </div>
+        <PageHeader
+          title="Панели показателей"
+          description="Ранжирование проектов: показатели, веса, правила предпочтения, пороговые отсечки"
+          breadcrumbs={[{ label: 'Аналитика', href: '/analytics' }, { label: 'Панели показателей' }]}
+        />
         <div className="flex-1 overflow-hidden p-6">
           <ProjectsRankingView
             onOpenCard={() => {}}

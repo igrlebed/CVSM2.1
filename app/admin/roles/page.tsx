@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { usePermission } from '@/hooks/use-permission';
 import { AccessDeniedState } from '@/components/ui/access-denied-state';
 import { Shield, Check, X } from 'lucide-react';
+import { PageHeader } from '@/components/page-header';
 
 const SYSTEM_VERSION = '0.1.0';
 
@@ -35,12 +36,14 @@ export default function AdminRolesPage() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <div>
-            <h1 className="text-xl font-semibold text-foreground">Роли и права доступа</h1>
-            <p className="text-sm text-muted-foreground">Матрица доступов по базовым ролям</p>
-          </div>
-        </div>
+        <PageHeader
+          title="Роли и права доступа"
+          description="Матрица доступов по базовым ролям"
+          breadcrumbs={[
+            { label: 'Администрирование', href: '/admin/users' },
+            { label: 'Роли и права' },
+          ]}
+        />
 
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-3xl space-y-4">

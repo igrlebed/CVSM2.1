@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/auth-context';
 import { ROLE_LABELS } from '@/lib/auth';
 import { User, Shield, Mail, Building2, Calendar, Key, CheckCircle, Save } from 'lucide-react';
+import { toast } from 'sonner';
+import { PageHeader } from '@/components/page-header';
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -22,19 +24,21 @@ export default function ProfilePage() {
 
   const handleSave = () => {
     setIsEditing(false);
+    toast.success('Данные профиля обновлены');
   };
 
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Личный кабинет</h1>
-              <p className="text-sm text-muted-foreground">Управление учётной записью и настройками</p>
-            </div>
-            {!isEditing ? (
+        <PageHeader
+          title="Личный кабинет"
+          description="Управление учётной записью и настройками"
+          breadcrumbs={[
+            { label: 'Главная', href: '/' },
+            { label: 'Личный кабинет' },
+          ]}
+          actions={
+            !isEditing ? (
               <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
                 <Key className="h-4 w-4 mr-2" />
                 Редактировать
@@ -49,9 +53,9 @@ export default function ProfilePage() {
                   Сохранить
                 </Button>
               </div>
-            )}
-          </div>
-        </div>
+            )
+          }
+        />
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
@@ -154,7 +158,9 @@ export default function ProfilePage() {
                         : 'Не ограничен'}
                     </span>
                   </div>
-                  <Button variant="outline" size="sm" className="w-full">
+                  <Button variant="outline" size="sm" className="w-full" onClick={() => {
+                    toast.info('Смена пароля', { description: 'Функция доступна в production-версии с бэкендом' });
+                  }}>
                     <Key className="h-4 w-4 mr-2" />
                     Сменить пароль
                   </Button>

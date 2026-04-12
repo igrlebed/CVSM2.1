@@ -15,6 +15,8 @@ import { AccessDeniedState } from '@/components/ui/access-denied-state';
 import { ArrowLeft, Save, Copy, CheckCircle, AlertTriangle } from 'lucide-react';
 import { ROLE_LABELS } from '@/lib/auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from 'sonner';
+import { PageHeader } from '@/components/page-header';
 
 const DEPARTMENTS = [
   'Центр организации скоростного и высокоскоростного сообщения',
@@ -79,6 +81,7 @@ export default function AdminUserCreatePage() {
     const password = generatePassword();
     setGeneratedPassword(password);
     setCreated(true);
+    toast.success(`Пользователь «${name}» успешно создан`);
   };
 
   const toggleRole = (role: string) => {
@@ -89,17 +92,20 @@ export default function AdminUserCreatePage() {
     return (
       <AppShell>
         <div className="flex flex-col h-[calc(100vh-4rem)]">
-          <div className="px-6 py-4 border-b border-border/40 bg-card">
-            <div className="flex items-center gap-3">
+          <PageHeader
+            title="Пользователь создан"
+            description="Учётная запись успешно создана"
+            breadcrumbs={[
+              { label: 'Администрирование', href: '/admin/users' },
+              { label: 'Пользователи', href: '/admin/users' },
+              { label: 'Создание пользователя' },
+            ]}
+            actions={
               <Button variant="ghost" size="icon" onClick={() => router.push('/admin/users')}>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <div>
-                <h1 className="text-xl font-semibold text-foreground">Пользователь создан</h1>
-                <p className="text-sm text-muted-foreground">Учётная запись успешно создана</p>
-              </div>
-            </div>
-          </div>
+            }
+          />
           <div className="flex-1 overflow-y-auto p-6">
             <div className="max-w-2xl mx-auto space-y-4">
               <Alert className="border-emerald-200 bg-emerald-50 text-emerald-800">
@@ -155,17 +161,20 @@ export default function AdminUserCreatePage() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <div className="flex items-center gap-3">
+        <PageHeader
+          title="Создание пользователя"
+          description="Заполните данные для создания новой учётной записи"
+          breadcrumbs={[
+            { label: 'Администрирование', href: '/admin/users' },
+            { label: 'Пользователи', href: '/admin/users' },
+            { label: 'Создание пользователя' },
+          ]}
+          actions={
             <Button variant="ghost" size="icon" onClick={() => router.push('/admin/users')}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Создание пользователя</h1>
-              <p className="text-sm text-muted-foreground">Заполните данные для создания новой учётной записи</p>
-            </div>
-          </div>
-        </div>
+          }
+        />
 
         <div className="flex-1 overflow-y-auto p-6">
           <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">

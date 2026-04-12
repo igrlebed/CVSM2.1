@@ -1,6 +1,7 @@
 'use client';
 
 import { AppShell } from '@/components/app-shell';
+import { PageHeader } from '@/components/page-header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Building2, Download, Scale } from 'lucide-react';
@@ -9,15 +10,12 @@ export default function OrgModelPage() {
   return (
     <AppShell>
       <div className="flex flex-col h-[calc(100vh-4rem)]">
-        <div className="px-6 py-4 border-b border-border/40 bg-card">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">Организационно-правовая модель</h1>
-              <p className="text-sm text-muted-foreground">Модель управления проектами организации высокоскоростного движения</p>
-            </div>
-            <Button variant="outline" size="sm" className="gap-2"><Download className="h-4 w-4" /> Экспорт</Button>
-          </div>
-        </div>
+        <PageHeader
+          title="Организационно-правовая модель"
+          description="Модель управления проектами организации высокоскоростного движения"
+          breadcrumbs={[{ label: 'Аналитика', href: '/analytics' }, { label: 'Орг. модель' }]}
+          actions={<Button variant="outline" size="sm" className="gap-2"><Download className="h-4 w-4" /> Экспорт</Button>}
+        />
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           <Card>
             <CardHeader>
